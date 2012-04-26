@@ -1,0 +1,29 @@
+#!/usr/bin/env ruby
+# encoding: utf-8
+require_relative '../lib/fundry/cli'
+require_relative '../lib/fundry/cli/development_data'
+require_relative '../lib/fundry/cli/database'
+
+require 'fundry/migrations'
+
+bin     = Fundry::Cli.bin
+command = (ARGV.shift || 'help').strip
+usage   = %Q{
+  usage: #{bin} [-h|--help] command
+
+  Commands are:
+    migrate      (Re)create the database and defaults.
+    upgrade      Upgrade the database if models have changed.
+    devel        Setup a sample development environment.
+    check-slave  Checks if the database slave is alive and is in sync.
+}.strip
+
+case command
+  when /^\-{0,2}h(?:elp)?$/, nil then puts(usage)
+  when 'migrate'                 then Fundry.auto_migrate!
+  when 'upgrade'                 then Fundry.auto_upgrade!
+  when 'devel'                   then Fundry::Cli::DevelopmentData.create
+  when 'check-slave'             then Fundry::Cli::Database.check_slave
+  else warn("#{bin}: '#{command}' is not an #{bin} command. See '#{bin} --help'.") && exit(-1)
+end
+

@@ -1,0 +1,45 @@
+.toolbar.clearfix
+  .leftCol
+    %h2 User Comments
+
+.innerPanel.clearfix
+  - if @feature.comments.empty?
+    %p Be the first to comment on this feature.
+  - else
+    %ul.listView
+      - @feature.comments.each do |comment|
+        %li.clearfix
+          %img{src: gravatar_url(comment.user, 53), width:"53", height:"53"}
+          .leftCol
+            %p
+              %a{href: url(:profile, comment.user.slug)}= comment.user.name
+            %small
+              Created
+              != timeago comment.created_at
+            .markdown
+              :safedown
+                #{comment.detail}
+
+  - if authenticated?
+    %form{method: 'post', action: url(:feature, @feature.id, :comment)}
+      %fieldset
+        %legend Comments
+        %ul
+          %li
+            %label{for: 'comment_detail'}
+              Comment (markdown accepted):
+              %a.markdownReference{href: '#'} ?
+            %textarea#comment_detail.markdown-input.resizable{name: 'comment[detail]'}
+          %li.markdown-preview-container
+            %label Preview:
+            .markdown-preview.markdown.innerPanel
+
+
+      %button{type: 'submit'} Create
+  - else
+    %p
+      Please
+      %a{href: url(:profile, :new)} sign up
+      |
+      %a{href: url(:login)} login
+

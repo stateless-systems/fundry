@@ -1,0 +1,15 @@
+!= partial :"project/_crumbs"
+
+.outerPanel
+  .toolbar.clearfix
+    .leftCol
+      %h2 New Project
+
+  .innerPanel.clearfix
+    %form#project{method: 'post', action: url(:project)}
+      %fieldset
+        %legend New Project
+        != partial :'project/_fields'
+      %button{type: 'submit'} Create
+
+  #markdownReference-modal

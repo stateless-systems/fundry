@@ -1,0 +1,5 @@
+%ul.tabs.clearfix
+  %li.status
+    %a{href: url(:feature, @feature.slug, :status)} Status
+  %li.comments
+    %a{href: url(:feature, @feature.slug, :comment)}= "Comments (#{@feature.comments.size})"

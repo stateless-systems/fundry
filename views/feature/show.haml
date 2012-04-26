@@ -1,0 +1,36 @@
+!= partial :"feature/_crumbs"
+
+.leftCols
+  .outerPanel.clearfix
+
+    != partial :'feature/_project'
+
+    .toolbar.arrow.clearfix.projectfix
+      .leftCol
+        %h2.addFeature
+          = @feature.name
+          %sup{class: @feature.state}= @feature.state
+      - if feature_editable?(@feature)
+        .rightCol
+          %ul
+            %li
+              %a{href: url(:feature, @feature.slug, :edit)} Edit this feature
+
+    != partial :'project/_verification'\
+
+    .innerPanel.clearfix
+      .markdown
+        :safedown
+          #{@feature.detail}
+
+    != partial :'feature/_approval'
+    != partial :'feature/_pledge'
+
+    != partial :'feature/_navigation'
+    != partial :"feature/_#{@tab || 'status'}"
+
+    #markdownReference-modal
+
+.rightCols
+  != partial :'feature/panel/_statistics'
+  != partial :'feature/panel/_activity'

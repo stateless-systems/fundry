@@ -1,0 +1,41 @@
+- unless @project.verified
+  - if authenticated? and authorized?(@project.user.id)
+    .innerPanel.clearfix
+      %script{src: '/js/prettify/prettify.js', type:'text/javascript'}
+      %h3 Instructions to verify your project
+      .note.clearfix
+        %p This project needs to be verified before it is visible on Fundry. You project can be verified two ways:
+        %ul
+          %li
+            Option 1 - Place a Fundry project link on your webpage at this
+            %a{href: sanitized_url(@project.web), rel: 'nofollow', target: '_new'} web address.
+          %li
+            Option 2 - Place the Fundry widget on the webpage at the following
+            %a{href: sanitized_url(@project.web), rel: 'nofollow', target: '_new'} web address.
+      %h3 Option 1: Paste this link on your site
+      %fieldset
+        %legend Fundry Link
+        %code#url-code.prettyprint
+          :code
+            <a href="#{absolute_url(:project, @project.slug)}">suggestions</a>
+      %h2{style: "text-decoration:underline;"} OR
+
+      %h3 Option 2: Put the whole widget on your site
+      %p Use this code on your webpage to share this project with others.
+      #widget-inset
+        %fieldset
+          %legend Fundry Widget
+          %code.prettyprint
+            != partial :"project/_widget_code"
+
+        %script{type: 'text/javascript', src: absolute_url('js', 'widget.js')}
+        :javascript
+          new Fundry.Widget('#{absolute_url(:project, @project.slug, 'widget')}');
+          prettyPrint();
+      %br
+  - else
+    %br
+    .error
+      This project has not been verified by the Owner / Lead Developer.
+      Donations and pledges can only be made to verified projects.
+

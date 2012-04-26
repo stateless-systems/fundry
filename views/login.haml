@@ -1,0 +1,38 @@
+- if @task
+  != partial :"combined/_authentication"
+- else
+  %ul#breadcrumbs.clearfix
+    %li.first
+      %a{href: '/'} Home
+    %li.second
+      Login
+
+  .outerPanel
+    .toolbar.clearfix
+      .leftCol
+        %h2 Login
+
+    .innerPanel.clearfix
+      %form#profile{method: 'post', action: url(:login)}
+        %fieldset
+          %legend Login to fundry
+          %ul
+            %li
+              %label{for: 'identifier'} Username or Email:
+              %input#identifier.formsy{type: 'text', name: 'identifier', value: params[:identifier], title: 'Login to create new project,  feature or to pledge.'}
+
+            %li
+              %label{for: 'password'} Password:
+              %input#password{type: 'password', name: 'password', value: ''}
+
+        %button{type: 'submit'} Login
+
+        %p
+          - # We've setup a sticky session variable to do combined signup, deposit & pledge.
+          - if session.key?(:postsignup)
+            %a{href: url(:profile, :new)} Sign up
+          - else
+            %a{href: url(:signup)} Sign up
+          |
+          %a{href: url(:recover, :new)} Forgot password ?
+

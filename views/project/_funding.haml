@@ -1,0 +1,9 @@
+- if @project.verified and @project.active? and @project.user.active?
+  #leaderboard.clearfix
+    .leftCol
+      %p If you can’t find the feature you want – add one now.
+
+    .rightCol
+      %ul#funding
+        %li
+          %a.grnBtn{href: url(:project, @project.slug, :feature, :new)} New Feature

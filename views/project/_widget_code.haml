@@ -1,0 +1,8 @@
+:code
+  <script type="text/javascript" src="#{absolute_url('js', 'widget.js')}"></script>
+  <script type="text/javascript">
+   // <![CDATA[
+     new Fundry.Widget('#{absolute_url(:project, @project.slug, 'widget')}', {width: '320px', height: '200px'});
+   // ]]>
+  </script>
+  <a href="#{absolute_insecure_url}">Powered by Fundry</a>

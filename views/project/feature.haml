@@ -1,0 +1,55 @@
+!= partial :"project/_crumbs"
+
+.leftCols
+  .outerPanel.clearfix
+
+    != partial :'project/_toolbar'
+    != partial :'project/_verification'
+    != partial :'project/_project'
+    != partial :'project/_navigation'
+
+    .toolbar.clearfix.heightFix
+      .leftCol
+        %h3 Project features
+      .rightCol
+        - unless @features.empty?
+          != partial :_navigation_order
+
+    - if @features.empty?
+      .innerPanel.clearfix
+        %p
+          No features have yet been added
+    - else
+      %ul.listView.clearfix
+        - is_user_active = @project.user.active?
+        - features       = paginate(@features)
+        - features.each do |feature|
+          %li.clearfix
+            .leftCol
+              %h3
+                %a{href: url(:feature, feature.slug), title: feature.name}= feature.name
+                - if feature.state != 'pending'
+                  %sup{class: feature.state}= feature.state
+              %small.clearfix
+                Created
+                != timeago feature.created_at
+                \- by
+                %a{href: url(:profile, feature.created_by.slug)}= feature.created_by.name
+            .rightCol
+              .pledged
+                != money feature.balance
+                Pledged
+              - if is_user_active and !feature.state.match(/rejected|complete/)
+                %a.fundit{href: url(:feature, "#{feature.slug}#pledge")}
+                  %span fund it
+              - else
+                %a.fundit.disabled.tipsie{title: "This feature cannot accept funding at this time."}
+                  %span fund it
+      != paginate_control features
+
+  != partial :'project/_funding'
+
+.rightCols
+  != partial :'project/panel/_statistics'
+  != partial :'project/panel/_activity'
+

@@ -1,0 +1,18 @@
+.toolbar.arrow.clearfix
+  .leftCol
+    %h2.add Feature New feature
+  .rightCol
+
+.innerPanel.clearfix
+  %form#feature{method: 'post', action: "/feature/add"}
+    %fieldset
+      %legend Feature New feature
+      != partial :"feature/form/_fields"
+      %ul
+        %li.checkbox
+          %input{type: 'checkbox', name: 'tc', id: 'tc'}
+          %label{for: 'tc'}
+            I agree to the
+            %a.terms{href: "#"} terms and conditions
+
+      %button{type: 'submit'} Create

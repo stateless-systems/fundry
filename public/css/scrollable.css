@@ -1,0 +1,72 @@
+
+/*
+	root element for the scrollable.
+	when scrolling occurs this element stays still.
+*/
+.scrollable {
+	/* required settings */
+	overflow:hidden;
+}
+
+/*
+	root element for scrollable items. Must be absolutely positioned
+	and it should have a extremely large width to accomodate scrollable items.
+	it's enough that you set the width and height for the root element and
+	not for this element.
+*/
+.scrollable .items {
+	/* this cannot be too large */
+	height:20000em;
+	position:absolute;
+	clear:both;
+  left: 5px;
+}
+
+.items > div {
+  margin: 0 10px;
+  display: block;
+  height:265px;
+  padding:30px 50px 20px 20px;
+}
+
+
+.items > div img.info-graphic {
+  display: block;
+  margin: auto;
+}
+
+/* position and dimensions of the navigator */
+.navi {
+  top: 10px;
+  right: 10px;
+  z-index: 1;
+  position: absolute;
+}
+
+
+/* items inside navigator */
+.navi a {
+  float:left;
+  clear: both;
+  margin:3px;
+  display:block;
+  color:#F5F4EA;
+  padding: 8px 10px;
+  background:#9EB6B7;
+  background: rgba(61,60,59,0.25);
+  -moz-border-radius:3px;
+  -webkit-border-radius:3px;
+  text-decoration: none;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+/* mouseover state */
+.navi a:hover {
+  background: #23300B;
+}
+
+/* active state (current page state) */
+.navi a.active {
+  background: #23300B;
+}

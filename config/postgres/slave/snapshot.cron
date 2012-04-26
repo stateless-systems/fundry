@@ -1,0 +1,8 @@
+# hourly snapshots 5min past the hour.
+05 * * * *    cd /var/www/fundry && ./bin/fundry-db-snapshot create
+
+# cleanup previous day's hourly snapshots except 01:00 hrs.
+30 01 * * *   cd /var/www/fundry && ./bin/fundry-db-snapshot cleanup_hourly
+
+# cleanup previous months's daily snapshots except the one for 1st day.
+30 03 01 * *  cd /var/www/fundry && ./bin/fundry-db-snapshot cleanup_daily

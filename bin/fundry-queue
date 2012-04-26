@@ -1,0 +1,86 @@
+#!/usr/bin/env ruby
+require_relative '../lib/fundry/cli'
+require 'peon'
+require 'file/pid'
+require 'job/dispatcher'
+require 'optparse'
+require 'readline'
+
+logfile  = '/var/log/fundry.queue.log'
+lockfile = '/tmp/fundry.queue.pid'
+bin      = Fundry::Cli.bin
+command  = (ARGV.shift || 'help').strip
+usage    = %Q{
+usage: #{bin} [-h|--help] command
+
+Commands are:
+  start  (Re)start the job queue.
+    --[no]detach  Daemonize.
+    --host HOST   Delivery gateway host.
+    --port PORT   Delivery gateway port.
+    --log  FILE   Log to file.
+  stop   Stop the job queue.
+  flush  Flush the job queue. CAUTION: Should not be used in production.
+}.strip
+
+case command
+  when /^\-{0,2}h(?:elp)?$/, nil
+    puts usage
+
+  when 'start'
+    help, daemonize, host, port, log = false, false, '127.0.0.1', 8080, nil
+    OptionParser.new do |op|
+      op.on('-h', '--h', '--help'){help = true}
+      op.on('-D', '--daemonize'){|d| daemonize = d}
+      op.on('-o HOST', '--host HOST', String){|h| host = h}
+      op.on('-p PORT', '--port PORT',Integer){|p| port = p}
+      op.on('--log FILE', String){|l| log  = l}
+    end.parse!
+
+    if help || ARGV.first.to_s =~ /h(?:elp)/
+      puts usage
+      exit
+    end
+
+    log ||= logfile if daemonize
+
+    # TODO: The queue should really handle all this. It needs a watchdog and launcher.
+    puts 'Starting...'
+    pid = Process.fork do
+      begin
+        Process.daemon if daemonize
+        pid = File::Pid.new(lockfile, Process.pid)
+        pid.run{ Job::Dispatcher.new(log, host: host, port: port).run}
+      rescue File::Pid::PidFileExist => error
+        warn 'Queue lock ' + error.message
+        exit -1
+      ensure
+        pid
+      end
+    end
+
+    daemonize ? Process.detach(pid) : Process.waitpid(pid)
+
+  when 'stop'
+    if File.exists?(lockfile)
+      puts 'Stopping... '
+      Process.kill("TERM", File.read(lockfile).to_i)
+    else
+      warn 'Queue not running.'
+    end
+
+  when 'flush'
+    warn %q{WARNING: Flushing the job queue is not reversable! It's a bad idea in production.}
+    flush = Readline.readline('Flush queue [yes/no] (no): ') until flush =~ /^(?:yes|no)$/i
+    if flush =~ /^yes$/i
+      print 'Flushing... '
+      Peon.flush
+      puts 'done.'
+    else
+      puts 'Flush aborted.'
+    end
+
+  else
+    warn("#{bin}: '#{command}' is not an #{bin} command. See '#{bin} --help'.") && exit(-1)
+end
+

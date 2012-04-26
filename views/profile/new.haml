@@ -1,0 +1,50 @@
+%ul#breadcrumbs.clearfix
+  %li.first
+    %a{href: '/'} Home
+  %li.second
+    Sign Up
+
+.outerPanel
+  .toolbar.clearfix
+    .leftCol
+      %h2 Sign Up
+    .rightCol
+    - # TODO: validation @user
+
+
+  .innerPanel.clearfix
+    %form#profile{method: 'post', action: url(:profile)}
+      %fieldset
+        %legend Sign up to fundry
+        %ul
+          %li
+            %label{for: 'user_username'} User name:
+            %input.formsy{type: 'text', name: 'user[username]', id: 'user_username', value: @user.username, title: "Once you’re signed up you can add projects, or add funds so you can pledge money."}
+
+          %li
+            %label{for: 'user_password'} Password:
+            %input#user_password.formsy{type: 'password', name: 'user[password]', value: @user.password, title: "maximum 40 characters"}
+
+          %li
+            %label{for: 'user_email'} Email:
+            %input#user_email{type: 'text', name: 'user[email]', value: @user.email}
+
+          %li.captcha
+            %label{for: 'captcha'} Enter the letters below:
+            != captcha(ajax: false)
+
+          %li.checkbox
+            %input{type: 'checkbox', name: 'tc', checked: !!params['tc']}
+            %label{for: 'tc'}
+              I agree to the
+              %a.terms{href: '#'} terms and conditions
+
+            %input#mu{type: 'checkbox', name: 'user[subscription][updates]', checked: @user.subscription.updates?}
+            %label{for: 'mu'} Keep me informed of any new features or developments
+
+            %input#mr{type: 'checkbox', name: 'user[subscription][reminders]', checked: @user.subscription.reminders?}
+            %label{for: 'mr'} Send me reminders related to projects and features.
+
+      %button{type: 'submit'} Create
+
+  #terms-modal

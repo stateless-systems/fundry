@@ -1,0 +1,12 @@
+*DS_Store
+*.swp
+._*
+bin/*
+!bin/fundry*
+gems/*
+tmp/*
+!gems/ruby
+gems/ruby/*/*
+!gems/ruby/*/cache
+public/shots
+public/__status__.txt

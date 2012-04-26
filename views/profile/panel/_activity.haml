@@ -1,0 +1,63 @@
+.toolbar.clearfix.toolsFix
+  .leftCol
+    %h3
+      %a.rss{href: absolute_url(:profile, @user.slug, :'activity.rss')} Activity
+  .rightCol
+    %ul
+      %li
+        %a{href: url(:profile, @user.slug, :activity)} more
+
+.panel
+  %ul#activity
+    - @user.events(order: [:created_at.desc], limit: 5).each do |event|
+      - detail = event.detail
+      - case event
+        - when Fundry::Event::User::Create
+          %li
+            Profile created.
+            %br
+            != timeago event.created_at
+        - when Fundry::Event::Project::Create
+          %li
+            Project
+            %a{href: url(:project, event.project_slug)}= detail[:project][:name]
+            created.
+            %br
+            != timeago event.created_at
+        - when Fundry::Event::Feature::Create
+          %li
+            Feature
+            %a{href: url(:feature, event.feature_slug)}= detail[:feature][:name]
+            requested for
+            %a{href: url(:project, event.project_slug)}= detail[:project][:name]
+        - when Fundry::Event::Pledge::Create, Fundry::Event::Pledge::Retract, Fundry::Event::Pledge::Paid, Fundry::Event::Pledge::Refunded
+          %li
+            != event.title
+            != money BigMoney.new(detail[:pledge][:balance][:amount], detail[:pledge][:balance][:currency])
+            to
+            %a{href: url(:feature, event.feature_slug)}= detail[:feature][:name]
+            %br
+            != timeago event.created_at
+        - when Fundry::Event::Payment::Deposit
+          - if authorized? @user.id
+            %li
+              Deposit
+              != money BigMoney.new(detail[:balance][:amount], detail[:balance][:currency])
+              %br
+              != timeago event.created_at
+        - when Fundry::Event::Payment::Withdraw
+          - if authorized? @user.id
+            %li
+              Withdrawal
+              != money BigMoney.new(detail[:balance][:amount], detail[:balance][:currency])
+              %br
+              != timeago event.created_at
+        - when Fundry::Event::Donation::Create
+          - if (detail[:donation][:anonymous] and authorized?(@user.id)) or !detail[:donation][:anonymous]
+            %li
+              Donated
+              != money BigMoney.new detail[:donation][:balance][:amount], detail[:donation][:balance][:currency]
+              to
+              %a{href: url(:project, event.project_slug)}= detail[:project][:name]
+              %br
+              != timeago event.created_at

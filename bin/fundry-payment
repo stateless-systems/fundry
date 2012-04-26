@@ -1,0 +1,40 @@
+#!/usr/bin/env ruby
+require 'logger'
+require 'optparse'
+require 'fileutils'
+require_relative '../lib/fundry/cli'
+require_relative '../lib/fundry/cli/payment'
+
+bin     = Fundry::Cli.bin
+command = (ARGV.shift || 'help').strip
+usage   = %Q{
+  usage: #{bin} [-h|--help] command
+
+  Commands are:
+    features
+      --id=<feature id>
+      --cutoff=<cutoff time> * cutoff time should be in YYYY-MM-DDTHH:MM:SS format.
+}
+
+def features
+  options = {}
+  OptionParser.new do |opts|
+    opts.on("-i", "--id feature_id", "process payment for feature id") do |id|
+      options[:id] = id
+    end
+    opts.on("-c", "--cutoff time", "process payment for features created after") do |time|
+      options[:cutoff] = time
+    end
+  end.parse!
+
+  FileUtils.rm_f('/tmp/fundry.payment.log')
+  logger = Logger.new('/tmp/fundry.payment.log', 0)
+  Fundry::Cli::Payment.new.process_features(options.merge({logger: logger}))
+  system('cat /tmp/fundry.payment.log | mail -s "fundry payments" root')
+end
+
+case command
+  when /^\-{0,2}h(?:elp)?$/, nil then puts usage
+  when 'features'                then features
+  else warn("#{bin}: '#{command}' is not an #{bin} command. See '#{bin} --help'.") && exit(-1)
+end

@@ -1,0 +1,35 @@
+!!! XML
+%rss{version: '2.0'}
+  %channel
+    %title= "Fundry - #{@feature.name}"
+    %link= absolute_url(:feature, @feature.slug)
+    %description= "Recent #{@feature.name} activity on Fundry."
+    %pubDate= Time.now
+    - @feature.events(order: [:id.desc], limit: 100).each do |event|
+      - case event
+        - when Fundry::Event::Feature::Create
+          %item
+            %guid= event.id
+            %pubDate= event.created_at
+            %link= absolute_url(:feature, event.feature_slug)
+            %title= "Feature '#{event.detail[:feature][:name]}' requested by '#{event.detail[:user][:name]}'."
+            %description
+              Feature
+              %a{href: absolute_url(:feature, event.feature_slug)}= event.detail[:feature][:name]
+              requested by
+              %a{href: absolute_url(:profile, event.user.slug)}= event.detail[:user][:name]
+              \.
+        - when Fundry::Event::Pledge::Create, Fundry::Event::Pledge::Retract
+          - amount = BigMoney.new(event.detail[:pledge][:balance][:amount], event.detail[:pledge][:balance][:currency])
+          %item
+            %guid= event.id
+            %pubDate= event.created_at
+            %link= absolute_url(:feature, event.feature_slug)
+            %title= "#{event.detail[:user][:name]} #{event.title.downcase} $#{amount} to feature '#{event.detail[:feature][:name]}'."
+            %description
+              %a{href: absolute_url(:profile, event.user.slug)}= event.detail[:user][:name]
+              pledged
+              != money amount
+              to feature
+              %a{href: absolute_url(:feature, event.feature_slug)}= event.detail[:feature][:name]
+              \.

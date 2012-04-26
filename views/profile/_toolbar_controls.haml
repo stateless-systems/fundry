@@ -1,0 +1,17 @@
+- if authorized? @user.id
+  %ul
+    %li
+      %a{href: url(:profile, :edit)} Edit your profile
+    -#%li
+      %a{href: url(:profile, :deactivate)} Deactivate profile
+- if authenticated? and user.admin? and user.id != @user.id
+  %ul
+    %li
+      - if @user.suspended?
+        %form.confirmsubmit{action: "/profile/#{@user.id}/unsuspend", method: 'post'}
+          %input{type: 'hidden', name: '_method', value: 'put'}
+          %button{type: 'submit'} unsuspend
+      - else
+        %form.confirmsubmit{action: "/profile/#{@user.id}/suspend", method: 'post'}
+          %input{type: 'hidden', name: '_method', value: 'put'}
+          %button{type: 'submit'} suspend

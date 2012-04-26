@@ -1,0 +1,31 @@
+%ul#breadcrumbs.clearfix
+  %li.first
+    %a{href: '/'} Home
+  %li.second
+    %a{href: '/profile'} User Profile
+  %li.third
+    Deposit
+
+.leftCols
+  .outerPanel
+    .toolbar.clearfix
+      .leftCol
+        %h2 Deposit
+      .rightCol
+        %ul
+          %li
+            %a{href: '/profile'} Back to Profile  
+
+    .innerPanel.clearfix
+      :markdown
+
+        When you click ‘Deposit’ you’ll be taken to PayPal where you’ll need to sign in with your PayPal account and confirm the payment.
+
+      %form#deposit{method: 'post', action: url(:deposit), name: 'deposit'}
+        %fieldset
+          %legend
+          != partial :"deposit/_form"
+          %button{type: 'submit'} Deposit
+
+.rightCols
+  != partial :'/profile/_account'

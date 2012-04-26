@@ -1,0 +1,2 @@
+# runs a daily payment processing job for completed features.
+10 7 * * * cd /var/www/fundry && ./bin/fundry-payment-features-daily

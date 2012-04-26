@@ -1,0 +1,74 @@
+#!/bin/bash
+
+BASE=/db/dumps
+
+dump() {
+  DIR=$BASE/$(date -u +%Y%m)/$(date -u +%d)/$(date -u +%H)
+  echo -n creating $DIR .........
+  mkdir -p $DIR
+  if [ $? != 0 ]; then
+    echo ERROR: unable to create $DIR
+    exit 1
+  fi
+  echo ok
+
+  echo -n dumping database ........................
+  pg_dump fundry > $DIR/fundry.sql
+  if [ $? != 0 ]; then
+    echo ERROR: unable to dump data
+    exit 1
+  fi
+  echo ok
+
+  echo -n compressing data ........................
+  bzip2 $DIR/fundry.sql
+  if [ $? != 0 ]; then
+    echo ERROR: unable to compress data
+    exit 1
+  fi
+  echo ok
+  echo all done
+}
+
+# cleanup hourly dumps for yest except 01:00 hrs
+cleanup_hourly() {
+  DIR=$BASE/$(date -u +%Y%m -d '1 day ago')/$(date -u +%d -d '1 day ago')
+  if [ -d $DIR ]; then
+    echo -n cleaning up hourly dumps except 01:00 from $DIR ...
+    find $DIR/* -maxdepth 0 -type d | grep -v "/01$" | sudo xargs rm -rf
+    if [ $? != 0 ]; then
+      echo ERROR: unable to cleanup hourly dumps from $DIR
+      exit 1
+    fi
+    echo ok
+  else
+    echo ERROR: cannot find $DIR
+    exit 1
+  fi
+  echo all done
+}
+
+# cleanup daily dumps for last month except 1st day of last month.
+cleanup_daily() {
+  DIR=$BASE/$(date -u +%Y%m -d '1 month ago')
+  echo -n cleaning up daily dumps except 1st from $DIR ...
+  find $DIR/* -maxdepth 0 -type d | grep -v "/01$" | sudo xargs rm -rf
+  if [ $? != 0 ]; then
+    echo ERROR: unable to cleanup daily dumps from $DIR
+    exit 1
+  fi
+  echo ok
+  echo all done
+}
+
+case $1 in
+          create) dump;;
+  cleanup_hourly) cleanup_hourly;;
+   cleanup_daily) cleanup_daily;;
+               *) echo "";
+                  echo "$0: invalid option $1";
+                  echo "Usage: $0 create|cleanup_hourly|cleanup_daily";
+                  echo ""; exit 1;;
+esac
+
+exit 0

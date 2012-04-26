@@ -1,0 +1,31 @@
+#!/bin/bash
+
+function pull() {
+  git reset --hard -q > /dev/null
+  log=$(git pull -q 2>&1 > /dev/null | grep -v "\(Connection closed by remote host\|The remote end hung up unexpectedly\|Connection timed out\)")
+  if [ "x$log" != "x" ]; then
+     echo "failed to pull changes: $! $log" 1>&2
+     exit 1
+  fi
+}
+
+function usage() {
+cat <<EOM
+usage: $0 [-h|--help] command
+
+Commands:
+    pull   Pull the latest changes from github
+EOM
+}
+
+while getopts "h" OPTION
+do
+  case $OPTION in
+    h) usage; exit;;
+  esac
+done
+
+case $1 in
+  pull) pull;;
+     *) usage; exit 0;;
+esac

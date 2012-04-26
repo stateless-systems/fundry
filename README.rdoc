@@ -1,0 +1,106 @@
+= Fundry
+
+== Description
+
+A failed crowd funding solution for developers. Kickstarter kicked us in the pants on that one.
+The code is quite antiquated but may be useful to someone somewhere.
+
+== Deployment notes
+
+=== Dependencies
+
+* Repositories, add these to /etc/apt/sources.list and run sudo apt-get update
+    deb http://ppa.launchpad.net/gijzelaar/opencv2/ubuntu lucid main
+    deb-src http://ppa.launchpad.net/gijzelaar/opencv2/ubuntu lucid main
+    deb http://ppa.launchpad.net/deepfryed/ppa/ubuntu lucid main
+    deb-src http://ppa.launchpad.net/deepfryed/ppa/ubuntu lucid main
+
+* Install ruby, associated libraries and others
+    sudo apt-get install ruby1.9.1 ruby1.9.1-dev libopenssl-ruby1.9.1 libopencv-dev libsasl2-dev sphinxsearch
+
+* Install postgresql-8.4 and libs
+    sudo apt-get postgresql-8.4 postgresql-client-8.4 libpq-dev
+
+* Install memcached, varnish and nginx
+    sudo apt-get install varnish memcached nginx
+    sudo /etc/init.d/varnish stop
+    sudo /etc/init.d/nginx   stop
+
+* XML and other shit libraries (for nokogiri etc)
+    sudo apt-get install libxml2-dev libxslt1-dev
+
+* Install bundler, some stable version or one that works like (0.8.1). I'll leave it as an exercise for
+  you to suffer.
+
+* Create a new user that unicorn will run under.
+    sudo adduser <user>
+    sudo chown -R <user>:<user> /var/www
+
+* Switch to <user>
+    su - <user>
+
+* Generate ssh keys and add the id_rsa.pub to authorized keys in github.
+    ssh-keygen
+
+=== XXX Credentials.
+
+Search for XXX, You'll need credentials for:
+
+* Paypal.
+* Google analytics.
+
+=== Initial deployment
+
+    cd /var/www
+    git clone git@github.com:stateless-systems/fundry
+    cd fundry
+    git checkout -b stable origin/stable
+    gem bundle --cached
+    cp config/hooks/post-merge .git/hooks
+    chmod a+x .git/hooks/post-merge
+
+Setting up varnish and nginx
+
+    sudo rm -f /etc/nginx/sites-enabled/default /etc/nginx/nginx.conf
+    sudo ln -s $PWD/config/fundry.production.conf /etc/nginx/sites-enabled/fundry
+    sudo ln -s $PWD/config/nginx.sample.conf /etc/nginx/nginx.conf
+
+Make any changes necessary to /etc/nginx/nginx.conf
+
+    sudo ln -s $PWD/config/varnish.default /etc/defaults/varnish
+    sudo ln -s $PWD/config/varnish.vcl /etc/varnish/default.vcl
+
+    sudo /etc/init.d/varnish restart
+    sudo /etc/init.d/nginx   restart
+
+Startup unicorn
+
+   ./bin/fundry-unicorn -E production start
+
+Setup cronjob to pull production deployments
+
+    crontab -r
+    cat config/cron/* | crontab -
+
+=== Sphinx setup
+
+    sudo ln -s $PWD/config/sphinx.conf /etc/sphinxsearch/sphinx.conf
+    sudo /etc/init.d/sphinxsearch restart
+
+=== Postgresql config & setup
+
+Undocumented.
+
+=== Mailserver setup
+
+Undocumented.
+
+=== Monit setup
+
+Undocumented.
+
+=== Subsequent deployments
+
+* login to the database server and run any migrations you need to.
+* push stuff to stable branch and go have beer.
+* but check your inbox to make sure everything went ok.

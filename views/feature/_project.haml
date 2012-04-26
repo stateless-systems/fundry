@@ -1,0 +1,11 @@
+.toolbar.summary.clearfix
+  .leftCol
+    .leftCol
+      %a{href: sanitized_url(@feature.project.web), rel: 'nofollow', target: '_new'}
+        %img{src: "/shots/#{@feature.project.id}/xsmall", width: "83", height: "61", alt: @feature.project.name}
+    .rightCol
+      %h4
+        Project:
+        %a{href: url(:project, @project.slug)}= @feature.project.name
+
+      %small= @feature.project.summary

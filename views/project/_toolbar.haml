@@ -1,0 +1,20 @@
+.toolbar.clearfix.projectfix
+  .leftCol{class: authorized?(@project.user_id) ? 'authorized' : nil}
+    %h2.showProject
+      %div= @project.name
+      - if @project.verified?
+        %sup.verified Verified
+      - else
+        %sup.unverified Unverified
+
+  - if authorized? @project.user_id
+    .rightCol
+      %ul
+        %li
+          %a{href: url(:project, @project.slug, :edit)} Edit Project
+        - unless @project.verified
+          %li.verify-project
+            %a{href: url(:project, @project.id, :verify)} Verify Project
+            %form{method: 'post', action: url(:project, @project.id, :verify)}
+              %fieldset
+                %input{type: 'hidden', name: '_method', value: 'put'}

@@ -1,0 +1,43 @@
+!= partial :"project/_crumbs"
+
+.leftCols
+  .outerPanel.clearfix
+
+    != partial :'project/_toolbar'
+    != partial :'project/_verification'
+    != partial :'project/_project'
+    != partial :'project/_navigation'
+
+    .toolbar.clearfix.heightFix
+      .leftCol
+        %h3 Feature comments
+      .rightCol
+        - unless @comments.empty?
+          != partial :_navigation_order
+
+    - if @comments.empty?
+      .innerPanel.clearfix
+        %p
+          No features have been commmented on
+    - else
+      %ul.listView.clearfix
+        - comments = paginate(@comments)
+        - comments.each do |comment|
+          %li.clearfix
+            %img{src: gravatar_url(comment.user, 53), width:"53", height:"53"}
+            .leftCol
+              %h3
+                %a{href: url(:feature, comment.feature.slug)}= comment.feature.name
+              %small
+                Created
+                != timeago comment.created_at
+                %a{href: url(:profile, comment.user.slug)}= comment.user.name
+              :safedown
+                #{comment.detail}
+        != paginate_control comments
+
+  != partial :'project/_funding'
+
+.rightCols
+  != partial :'project/panel/_statistics'
+  != partial :'project/panel/_activity'

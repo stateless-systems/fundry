@@ -1,0 +1,36 @@
+/*
+
+	-- -- -- -- -- -- --
+	Fundry v1 base layout CSS file
+	last edit: 9 july 10
+	-- -- -- -- -- -- --
+
+	File Contents: Overides HTML default values
+	
+*/
+
+html { min-height: 100%; margin-bottom: 1px; } /* forces a vertical scrollbar so page won't shift in firefox etc */
+body { font: 62.5%/100% arial, verdana, sans-serif; margin: 0px; padding: 0px; }
+form, fieldset, legend, div, p, h1, h2, h3, h4, h5, h6, dl, dd, dt, ul, ul li, table, th, td, tr, img, a { margin: 0px; padding:0px; border: 0px; font-size: 100%; }
+input, select, textarea { font-size: 100%; font-weight: normal; color:#000; font-family:Arial; }
+ol { margin-top: 0px; margin-bottom: 0px; padding: 0px; }
+
+a { cursor:pointer; }
+
+h1, h2, h3 {clear:left;}
+
+ul, ul li 		{ list-style: none; list-style-type: none; }
+img				{ border: none; }
+td				{ vertical-align:top; }
+.left			{ float:left; }
+.right			{ float:right; }
+.block			{ display:block; }
+.inline 		{ display:inline; }
+.center 		{ text-align:center; }
+
+/* PIE's "How To Clear Floats Without Structural Markup" http://www.positioniseverything.net/easyclearing.html */
+.clearfix:after { content:"."; display:block; height:0; clear:both; visibility:hidden; }
+
+.clearfix {display : inline-block; }
+.clearfix {display : block;} /* Hides from IE-mac \*/
+* html .clearfix { overflow:hidden; o\verflow:visible; width:100%; w\idth:auto;	he\ight:1%; }

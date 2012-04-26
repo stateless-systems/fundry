@@ -1,0 +1,13 @@
+#statistics
+  .toolbar.clearfix.toolsFix
+    .leftCol
+      %h3 Funding
+
+  .panel
+    %ul
+      %li.totalPledged
+        != money @feature.pledges.balance
+        %strong
+          Pledged by
+          = @feature.pledges.size
+          people.

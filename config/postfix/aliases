@@ -1,0 +1,12 @@
+# See man 5 aliases for format
+fundry: support
+postmaster: root
+bharanee: bharanee@statelesssystems.com
+shane: shane@statelesssystems.com
+robert: robert@statelesssystems.com
+danial: danial@statelesssystems.com
+root: bharanee,danial
+systems: shane,bharanee,danial,robert
+support: shane,bharanee,robert
+invite: robert
+site: support

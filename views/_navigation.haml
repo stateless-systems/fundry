@@ -1,0 +1,16 @@
+#tabs.clearfix
+  .leftCol
+    %ul.tabs.clearfix
+      %li.projects
+        %a{href: url(:project)}  Projects
+      %li.features
+        %a{href: url(:feature)}  Features
+      %li.pledges
+        %a{href: url(:pledge)}   Pledges
+      %li.donations
+        %a{href: url(:donation)} Donations
+      %li.comments
+        %a{href: url(:comment)}  Comments
+  .rightCol
+  - if authenticated?
+    %a.addBtn{href: url(:project, :new)} Add a Project

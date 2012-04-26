@@ -1,0 +1,18 @@
+.pledged
+  %h3 Account Balance
+  %br
+  != money user.balance
+  %br
+  %a#profile_deposit.button{href: url(:deposit)} Deposit
+  - if user.balance > BigMoney.new(0, :usd)
+    %a#profile_withdraw.button{href: url(:withdraw)} Withdraw
+  - payments = Fundry::Payment.all(user_id: user.id, state: 'pending', order: [:created_at.desc])
+  - if payments.length > 0
+    .pending
+      %h3 Deposits pending clearance
+      %ul
+        - payments.each do |pending|
+          %li
+            != money pending.balance
+            != timeago pending.created_at
+

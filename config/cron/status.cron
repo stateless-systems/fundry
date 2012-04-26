@@ -1,0 +1,1 @@
+*/10 * * * * cd /var/www/fundry && ./bin/fundry-status > public/__status__.txt

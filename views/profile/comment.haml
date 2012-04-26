@@ -1,0 +1,50 @@
+!= partial :"profile/_crumbs"
+
+.leftCols
+  .outerPanel.clearfix
+    .toolbar.clearfix
+      .leftCol
+        .leftCol{style: "margin-left:-5px;"}
+          %img{src: gravatar_url(@user, 53), width:"53", height:"53"}
+        .rightCol
+          %h2.inline= @user.name.empty? ? @user.username : @user.name
+          %br
+          %small
+            Member since
+            != timeago(@user.created_at)
+      .rightCol
+        != partial :'profile/_toolbar_controls'
+
+    != partial :'profile/_profile'
+    != partial :'profile/panel/_projects'
+    != partial :'profile/_navigation'
+
+    .toolbar.clearfix
+      .leftCol
+        %h2 Comments
+
+    - if @user.comments.empty?
+      .innerPanel.clearfix
+        %p No features have been commmented on
+    - else
+      - comments = paginate(@user.comments)
+      %ul.listView
+        - comments.each do |comment|
+          %li.clearfix
+            .leftCol
+              %h3
+                %a{href: url(:project, comment.feature.project.slug)}= comment.feature.project.name
+              %small
+                Created
+                != timeago comment.created_at
+              %p
+                %a{href: url(:feature, comment.feature.slug, :comment)}= comment.feature.name
+              :safedown
+                #{comment.detail}
+      != paginate_control comments
+
+.rightCols
+  - if authorized? @user.id
+    != partial :'profile/_account'
+  != partial :'profile/panel/_statistics'
+  != partial :'profile/panel/_activity'

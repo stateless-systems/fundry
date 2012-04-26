@@ -1,0 +1,40 @@
+#!/usr/bin/env ruby
+require 'logger'
+require 'optparse'
+require 'fileutils'
+require_relative '../lib/fundry/cli'
+require_relative '../lib/fundry/cli/project'
+require 'file/pid'
+
+bin     = Fundry::Cli.bin
+command = (ARGV.shift || 'help').strip
+usage   = %Q{
+  usage: #{bin} [-h|--help] command
+
+  Commands are:
+    verify
+      --url=<url>  The fundry base url. default: 'http://fundry.com'
+      -r, --renew  Renew verification on sites that haven't been verified in more than a week.
+}
+
+case command
+  when /^\-{0,2}h(?:elp)?$/, nil then puts usage
+  when 'verify'
+    help, renew, url = false, false, 'http://fundry.com'
+    OptionParser.new do |op|
+      op.on('-h', '--h', '--help'){ help = true}
+      op.on('-r', '--renew'){ renew = true}
+      op.on('--url URL'){|u| url = u}
+    end
+
+    FileUtils.rm_f('/tmp/fundry.verify.log')
+    logger = Logger.new('/tmp/fundry.verify.log', 0)
+    lock   = File::Pid.new("/tmp/fundry.project.verify#{renew ? '-renew' : ''}.pid", Process.pid)
+    lock.run do
+      Fundry::Cli::Project.new.verify url,
+        *(renew ? [Time.now - 86400*7, Time.at(0)] : [Time.now - 86400, Time.now - 86400*7]), logger
+    end
+    system('cat /tmp/fundry.verify.log | mail -s "fundry verification" root')
+
+  else warn("#{bin}: '#{command}' is not an #{bin} command. See '#{bin} --help'.") && exit(-1)
+end

@@ -1,0 +1,17 @@
+!!! XML
+%urlset{xmlns: 'http://www.sitemaps.org/schemas/sitemap/0.9'}
+  - @urls.each do |url|
+    %url
+      %loc= url
+      %lastmod= Time.now.strftime('%F')
+      %changefreq daily
+  - Fundry::Project.all(verified: true).each do |project|
+    %url
+      %loc= absolute_insecure_url(:project, project.slug)
+      %lastmod= project.updated_at.strftime('%F')
+      %changefreq daily
+  - Fundry::Feature.all(state: %w(new complete pending)).each do |feature|
+    %url
+      %loc= absolute_insecure_url(:feature, feature.slug)
+      %lastmod= feature.updated_at.strftime('%F')
+      %changefreq daily

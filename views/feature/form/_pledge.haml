@@ -1,0 +1,17 @@
+- if authenticated?
+  %ul
+    %li#pledgeAmount
+      %label{for: 'pledge_amount'} Pledge Amount (USD):
+      %input.formsy{type: 'text', name: 'pledge[amount]', value: @balance, id:'pledge_amount', title: 'You are about to pledge money to a feature - you can retract it at any time before the Developer marks it as complete.'}
+-else
+  %ul
+    %li#paypalFees.clearfix
+      %label{for: 'pledge_amount'} Pledge Amount (USD):  
+      %input.formsy{type: 'text', name: 'pledge[amount]', value: @balance, id:'pledge_amount', title: 'You are about to pledge money to a feature - you can retract it at any time before the Developer marks it as complete.'}
+      %dl
+        %dt Estimated Paypal fees:
+        %dd
+          #fees_container.dollars
+        %dt Estimated total:
+        %dd
+          #total_container.dollars      

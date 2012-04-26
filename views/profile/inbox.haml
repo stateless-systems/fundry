@@ -1,0 +1,60 @@
+!= partial :"profile/_crumbs"
+
+.leftCols
+  .outerPanel.clearfix
+    .toolbar.clearfix
+      .leftCol
+        .leftCol{style: "margin-left:-5px;"}
+          %img{src: gravatar_url(user, 53), width:"53", height:"53"}
+        .rightCol
+          %h2.inline= user.name.empty? ? user.username : user.name
+          %br
+          %small
+            Member since
+            != timeago(user.created_at)
+      .rightCol
+        != partial :'profile/_toolbar_controls'
+
+    != partial :'profile/_profile'
+    != partial :'profile/panel/_projects'
+    != partial :'profile/_navigation'
+
+    .toolbar.clearfix
+      - emails = paginate(user.emails(order: :created_at.desc))
+      .leftCol
+        %h2 Inbox
+      .rightCol
+        - unless emails.empty?
+          %ul
+            %li
+              %a.delete-email{} delete selected
+
+    - if emails.empty?
+      .innerPanel.clearfix
+        %p Inbox is empty.
+    - else
+      %form#inbox-list{method: 'post', action: url(:profile, :inbox)}
+        %input{type: 'hidden', name: '_method', value: 'delete'}
+        %table{cellspacing: "0"}
+          %thead
+            %th.selection
+              %input{type: 'checkbox'}
+            %th Sender
+            %th Subject
+            %th Received
+          %tbody
+          - emails.each do |email|
+            %tr
+              %td.selection
+                %input{type: 'checkbox', name: 'email[]', value: email.id}
+              %td=  email.from
+              %td.subject
+                %a.view-email{href: "/profile/inbox/#{email.id}"}= email.subject
+              %td!= mailtime email.created_at
+
+      != paginate_control emails
+
+.rightCols
+  != partial :'profile/_account'
+  != partial :'profile/panel/_statistics'
+  != partial :'profile/panel/_activity'

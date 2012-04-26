@@ -1,0 +1,87 @@
+.toolbar.clearfix
+  .leftCol
+    %h2 Markdown reference
+
+.innerPanel.clearfix
+  .markdown
+    :markdown
+      Visit the [official Markdown syntax reference page](http://daringfireball.net/projects/markdown) for more detail.
+
+      ### Phrase Emphasis
+
+          *italic*   **bold**
+          _italic_   __bold__
+
+      ### Links
+
+      Links and images include the text or alternate text in preceding brackets:
+
+          An [Inline URL](http://url.com/ "With a title")
+
+      ### Images
+
+      Inline (titles are optional):
+
+          ![an inline image](/path/img.jpg "Title")
+
+      ### Headers
+
+      Setext style:
+          Header 1
+          ========
+          Header 2
+          --------
+
+      ATX style (closing #'s are optional):
+          # Header 1 #
+          ## Header 2 ##
+
+      ### Lists
+
+      Ordered:
+          1.  First ordered list item
+          2.  Second item
+
+      Unordered:
+          *   An unordered list item.
+
+              With multiple paragraphs.
+
+          *   Another unordered list item
+              1. With a nested item below it
+
+
+      ### Blockquotes
+
+          > Email-style angle brackets
+          > are used for blockquotes.
+
+          > > And, they can be nested.
+
+      ### Code Spans
+
+          `<code>` spans are delimited by backticks.  You can include literal
+          backticks like `` `this` ``.
+
+
+      ### Preformatted Code Blocks
+
+          This is a normal paragraph.
+
+              This is a preformatted code block. It must be indented
+              either by at least four spaces or a tab
+
+      ### Horizontal Rules
+
+      Three or more dashes or asterisks make a horizontal rule:
+
+          ---
+          * * *
+          - - - -
+
+      ### Manual Line Breaks
+
+      End a line with two or more spaces to do a manual line break:
+
+          Purple monkey__  
+          dishwasher.

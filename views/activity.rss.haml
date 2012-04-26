@@ -1,0 +1,72 @@
+!!! XML
+%rss{version: '2.0'}
+  %channel
+    %title= "Fundry Activity"
+    %link= absolute_url('activity.rss')
+    %description= "Recent activity on Fundry."
+    %pubDate= Time.now
+    - Fundry::Event.all(order: [:id.desc], limit: 100).each do |event|
+      - case event
+        - when Fundry::Event::User::Create
+          %item
+            %guid= event.id
+            %pubDate= event.created_at
+            %link= absolute_url(:profile, event.user.slug)
+            %title= "Profile '#{event.user.username}' created."
+            %description
+              Profile
+              %a{href: absolute_url(:profile, event.user.slug)}= event.user.username
+              created.
+        - when Fundry::Event::Project::Create
+          %item
+            %guid= event.id
+            %pubDate= event.created_at
+            %link= absolute_url(:project, event.project_slug)
+            %title= "Project '#{event.detail[:project][:name]}' created."
+            %description
+              Project
+              %a{href: absolute_url(:project, event.project_slug)}= event.detail[:project][:name]
+              created.
+        - when Fundry::Event::Feature::Create
+          %item
+            %guid= event.id
+            %pubDate= event.created_at
+            %link= absolute_url(:feature, event.feature_slug)
+            %title= "Feature '#{event.detail[:feature][:name]}' requested by '#{event.detail[:user][:name]}'."
+            %description
+              Feature
+              %a{href: absolute_url(:feature, event.feature_slug)}= event.detail[:feature][:name]
+              requested by
+              %a{href: absolute_url(:profile, event.user.slug)}= event.detail[:user][:name]
+              \.
+        - when Fundry::Event::Pledge::Create, Fundry::Event::Pledge::Retract
+          - amount = BigMoney.new(event.detail[:pledge][:balance][:amount], event.detail[:pledge][:balance][:currency])
+          %item
+            %guid= event.id
+            %pubDate= event.created_at
+            %link= absolute_url(:feature, event.feature_slug)
+            %title= "#{event.detail[:user][:name]} #{event.title.downcase} $#{amount} to feature '#{event.detail[:feature][:name]}'."
+            %description
+              %a{href: absolute_url(:profile, event.user.slug)}= event.detail[:user][:name]
+              pledged
+              != money amount
+              to feature
+              %a{href: absolute_url(:feature, event.feature_slug)}= event.detail[:feature][:name]
+              \.
+        - when Fundry::Event::Donation::Create
+          - amount = BigMoney.new(event.detail[:donation][:balance][:amount], event.detail[:donation][:balance][:currency])
+          %item
+            %guid= event.id
+            %pubDate= event.created_at
+            %link= absolute_url(:feature, event.feature_slug)
+            %title= "Donated $#{amount} to project '#{event.detail[:project][:name]}'."
+            %description
+              - if event.detail[:donation][:anonymous]
+                Anonymous user
+              - else
+                %a{href: absolute_url(:profile, event.user.slug)}= event.detail[:user][:name]
+              donated
+              != money amount
+              to project
+              %a{href: absolute_url(:project, event.project_slug)}= event.detail[:project][:name]
+              \.

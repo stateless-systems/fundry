@@ -1,0 +1,41 @@
+.toolbar.clearfix
+  .leftCol
+    %h3= "Projects (#{@user.projects.size})"
+  .rightCol
+    %ul
+      %li
+        - if authenticated? && authorized?(@user.id)
+          %a{href: url(:project, :new)} New Project
+
+- if @user.projects.empty?
+  .panel.empty
+- else
+  .panel
+    %table#projects{cellspacing: "0"}
+      %thead
+        %th Name
+        %th Features
+        %th Pledges
+        %th Donations
+        - if authorized? @user.id
+          %th
+      %tbody
+      - @user.projects.each do |project|
+        %tr
+          %td
+            %img.favicon{src: "/shots/#{project.id}/favicon", height: "16", width: "16"}
+            %a{href: url(:project, project.slug)}= project.name
+          %td
+            = project.features.count
+          %td
+            != money BigMoney.new(-(project.features.pledges.transfers.sum(:balance_amount) || 0), :usd)
+            = "(%d)" % project.features.pledges.count
+
+          %td
+            != money BigMoney.new(-(project.donations.transfers.sum(:balance_amount) || 0), :usd)
+
+            ="(%d)" % project.donations.count
+
+          - if authorized? @user.id
+            %td.center
+              %a.admin{href: url(:project, project.slug, :edit)} [edit]

@@ -1,0 +1,72 @@
+#!/bin/sh
+
+. /lib/lsb/init-functions
+
+start_unicorn() {
+  log_daemon_msg "Starting unicorn"
+  /bin/su fundry -c '/var/www/fundry/bin/fundry-web -E production start-unicorn' >/dev/null 2>&1
+  if [ ! -S /var/run/unicorn.sock ]; then
+    log_daemon_msg 'Unable to start unicorn'
+    log_end_msg 1
+    exit
+  else
+    log_end_msg 0
+  fi
+}
+
+start_hotshots() {
+  log_daemon_msg "Starting hotshots proxy"
+  /bin/su fundry -c '/var/www/fundry/bin/fundry-web -E production start-shots' >/dev/null 2>&1
+  sleep 3
+  if [ ! -S /var/run/hotshots.sock ]; then
+    log_daemon_msg 'Unable to start hotshots proxy'
+    log_end_msg 1
+    exit
+  else
+    log_end_msg 0
+  fi
+}
+
+start_queue() {
+  log_daemon_msg "Starting fundry queue"
+  /bin/su fundry -c '/var/www/fundry/bin/fundry-queue start -p 8080 -D' >/dev/null 2>&1
+  sleep 3
+  if [ ! -r /tmp/fundry.queue.pid ]; then
+    log_daemon_msg 'Unable to start fundry queue'
+    log_end_msg 1
+    exit
+  else
+    log_end_msg 0
+  fi
+}
+
+start() {
+  start_unicorn
+  start_hotshots
+  start_queue
+}
+
+stop() {
+  log_daemon_msg "Stopping fundry queue"
+  /bin/su fundry -c '/var/www/fundry/bin/fundry-queue stop' >/dev/null 2>&1
+  log_end_msg 0
+
+  log_daemon_msg "Stopping hotshots proxy"
+  /bin/su fundry -c '/var/www/fundry/bin/fundry-web -E production stop-shots' >/dev/null 2>&1
+  log_end_msg 0
+
+  log_daemon_msg "Stopping unicorn"
+  /bin/su fundry -c '/var/www/fundry/bin/fundry-web -E production stop-unicorn' >/dev/null 2>&1
+  log_end_msg 0
+}
+
+restart() {
+  stop
+  start
+}
+
+case $1 in
+    start) start;;
+     stop) stop;;
+  restart) restart;;
+esac

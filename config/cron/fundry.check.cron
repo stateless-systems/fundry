@@ -1,0 +1,5 @@
+# runs a full check of all transfers at 2:10 am localtime.
+10 2 * * * cd /var/www/fundry && ./bin/fundry check transfers
+
+# runs a check of balance caches every 20 mins
+*/20 * * * * cd /var/www/fundry && ./bin/fundry check balances

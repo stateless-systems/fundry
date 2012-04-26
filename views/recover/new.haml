@@ -1,0 +1,28 @@
+%ul#breadcrumbs.clearfix
+  %li.first
+    %a{href: '/'} Home
+  %li.second
+    %a{href: '/profile'} User Profile
+  %li.third
+    Recover Profile
+
+.outerPanel
+  .toolbar.clearfix
+    .leftCol
+      %h2 Recover profile
+    .rightCol
+
+  .innerPanel.clearfix
+    %form#recover{method: 'post', action: url(:recover)}
+      %fieldset
+        %legend Login to fundry
+        %ul
+          %li
+            %label{for: 'identifier'} Username or Email:
+            %input#identifier{type: 'text', name: 'identifier', value: ''}
+
+          %li.captcha
+            %label{for: 'captcha'} Enter the letters below:
+            != captcha(ajax: false)
+
+      %button{type: 'submit'} Recover

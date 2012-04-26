@@ -1,0 +1,17 @@
+%ul#breadcrumbs.clearfix
+  %li.first
+    %a{href: '/'} Home
+  %li.second
+    %a{href: url(:project, @feature.project.slug)}
+      Project:
+      = @feature.project.name
+  - if @feature.id
+    %li.third= @feature.name
+  - else
+    - if authorized?(@project.user_id)
+      %li.third
+        Add a new feature
+    - else
+      %li.third
+        Fund a new feature
+

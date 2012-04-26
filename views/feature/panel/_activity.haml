@@ -1,0 +1,24 @@
+.toolbar.clearfix.toolsFix
+  .leftCol
+    %h3
+      %a.rss{href: absolute_url(:feature, @feature.slug, :'activity.rss')} Activity
+  .rightCol
+    %ul
+      %li
+        %a{href: url(:feature, @feature.slug, :activity)} more
+
+.panel
+  %ul#activity
+    - @feature.events(order: [:id.desc], limit: 5).each do |event|
+      - case event
+        - when Fundry::Event::Feature::Create
+          %li.clearfix
+            %img.imgLeft{src: gravatar_url(event.user, 28), width:"28", height:"28"}
+            %a{href: url(:profile, event.detail[:user][:id])}= event.detail[:user][:name]
+            requested feature.
+        - when Fundry::Event::Pledge::Create, Fundry::Event::Pledge::Retract, Fundry::Event::Pledge::Paid, Fundry::Event::Pledge::Refunded
+          %li.clearfix
+            %img.imgLeft{src: gravatar_url(event.user, 28), width:"28", height:"28"}
+            %a{href: url(:profile, event.detail[:user][:id])}= event.detail[:user][:name]
+            != event.title
+            != money BigMoney.new(event.detail[:pledge][:balance][:amount], event.detail[:pledge][:balance][:currency])

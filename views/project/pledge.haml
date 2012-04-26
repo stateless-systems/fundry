@@ -1,0 +1,47 @@
+!= partial :"project/_crumbs"
+
+.leftCols
+  .outerPanel.clearfix
+
+    != partial :'project/_toolbar'
+    != partial :'project/_verification'
+    != partial :'project/_project'
+    != partial :'project/_navigation'
+
+    .toolbar.clearfix.heightFix
+      .leftCol
+        %h3 Users pledged to this project
+      .rightCol
+        - unless @pledges.empty?
+          != partial :_navigation_order
+
+    - if @pledges.empty?
+      .innerPanel.clearfix
+        %p
+          No pledges have been made to any features
+    - else
+      %ul.listView.clearfix
+        - pledges = paginate(@pledges)
+        - pledges.each do |pledge|
+          %li.clearfix
+            .new
+            %img.imgLeft{src: gravatar_url(pledge.transfer.user, 53), width:"53", height:"53"}
+            .leftCol
+              %h3
+                %a{href: url(:feature, pledge.feature.slug)}= pledge.feature.name
+              %small
+                Pledged
+                != timeago pledge.created_at
+                \- by
+                %a{href: url(:profile, pledge.transfer.user.slug)}= pledge.transfer.user.name
+            .rightCol
+              .pledged
+                != money -pledge.transfer.balance
+                Pledged
+      != paginate_control pledges
+
+  != partial :'project/_funding'
+
+.rightCols.clearfix
+  != partial :'project/panel/_statistics'
+  != partial :'project/panel/_activity'

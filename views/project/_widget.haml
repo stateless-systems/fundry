@@ -1,0 +1,23 @@
+#fundry-widget-modal2
+  #basic-modal-content.clearfix
+    .toolbar.clearfix
+      .leftCol
+        %h3 Fundry widget
+
+    .innerPanel.clearfix
+      .leftCol
+        %small Use this code on your webpage to share this project with others.
+        %script{src: '/js/prettify/prettify.js', type:'text/javascript'}
+      
+        %fieldset
+          %legend Fundry widget
+          %pre#widget-code.prettyprint
+            != partial :"project/_widget_code"
+
+      .rightCol
+        %script{type: 'text/javascript', src: absolute_url('js', 'widget.js')}
+        :javascript
+          function load_widget() {
+            new Fundry.Widget('#{absolute_url(:project, @project.slug, 'widget', {limit: 2})}', {width: '320px', height: '200px'});
+            prettyPrint();
+          }

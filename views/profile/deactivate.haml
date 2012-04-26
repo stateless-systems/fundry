@@ -1,0 +1,86 @@
+%ul#breadcrumbs.clearfix
+  %li.first
+    %a{href: '/'} Home
+  %li.second
+    %a{href: '/profile'} User Profile
+  %li.third
+    Delete Profile
+
+.leftCols
+  .outerPanel
+    - if @errors.empty?
+      .toolbar.clearfix
+        .leftCol
+          %h2 Delete Profile
+
+      .innerPanel.clearfix
+        %form{action: '/profile', method: 'post'}
+          %input{type: 'hidden', name: '_method', value: 'delete'}
+          %fieldset
+            %ul
+              %li
+                %p.note.clearfix
+                  Please tell us why you would like to deactivate your account. Your feedback is
+                  very much appreciated and would help us improve our service provided to the
+                  %a{href: '/'} fundry.com
+                  community.
+              %li
+                %label Feedback:
+                %textarea.resizable#feedback{name: 'feedback'}
+            %button Submit
+    - else
+      - if @errors[:awaiting]
+        .toolbar.clearfix
+          .leftCol
+            %h2 Step1. Approve or Reject all features
+
+        .innerPanel.clearfix
+          %p.note.clearfix
+            These are features you have pledged towards and have been completed. You need to
+            wait until these features are approved or rejected so we can finalize payments or
+            refunds.
+          %ol
+            - @errors[:awaiting].last.features.each do |feature|
+              %li
+                %a{href: url(:feature, feature.slug)}= feature.name
+          %br
+
+      - if @errors[:pledges]
+        .toolbar.clearfix
+          .leftCol
+            %h2 Step 2. Retract current pledges
+        .innerPanel.clearfix
+          %p.note.clearfix
+            You have pledged to the following pending or in-progress features and they
+            need to be retracted first. It would be more helpful to the developer working
+            on the feature if you leave a comment noting why you are retracting your pledge.
+          %ol
+            - @errors[:pledges].last.features.each do |feature|
+              %li
+                %a{href: url(:feature, feature.slug)}= feature.name
+          %br
+
+      - if @errors[:projects]
+        .toolbar.clearfix
+          .leftCol
+            %h2 Your projects that have active pledges against pending features
+        .innerPanel.clearfix
+          %ol
+            - @errors[:projects].last.each do |project|
+              %li
+                %a{href: url(:project, project.slug)}= project.name
+
+      - if @errors[:balance]
+        .toolbar.clearfix
+          .leftCol
+            %h2 Step 3. Withdraw balance to Paypal
+        .innerPanel.clearfix
+          %p
+            Your current account balance of
+            != money user.balance
+            needs to be
+            %a{href: '/withdraw'} withdrawn
+            to a Paypal account first.
+
+.rightCols
+  != partial :'profile/_account'

@@ -1,0 +1,206 @@
+#!/usr/bin/env ruby
+
+require 'fileutils'
+require 'timeout'
+require 'optparse'
+require_relative '../config/unicorn_settings'
+
+ROOT    = File.absolute_path(File.dirname(__FILE__) + '/..')
+bin     = File.split(__FILE__).last
+usage   = %Q{
+  usage: #{bin} [-E environment] [-h|--help] command
+
+  Commands are:
+    start           Start all webservers.
+    stop            Stop all webservers.
+    restart         Restart all webservers.
+    start-unicorn   Start Unicorn
+    stop-unicorn    Stop  Unicorn
+    restart-unicorn Restart Unicorn
+    start-shots     Start Hotshots proxy      
+    stop-shots      Stop Hotshots proxy      
+    restart-shots   Restart Hotshots proxy
+}.strip
+
+def unicorn_pid env
+  pidfile = UNICORN_SETTINGS[env.to_sym][:pidfile]
+  if File.exists?(pidfile)
+    File.read(pidfile).to_i
+  else
+    nil
+  end
+end
+
+def start_hotshots env
+  prefix    = env == 'development' ? '/tmp' : '/var/run'
+  logprefix = env == 'development' ? '/tmp' : '/var/log'
+
+  cmd = [ ROOT + '/bin/thin' ]
+  cmd << '-S %s/hotshots.sock' % prefix
+  cmd << '-P %s/hotshots.pid'  % prefix
+  cmd << '-l %s/hotshots.log'  % logprefix
+  cmd << '-c /var/www/fundry -d -R %s' % ROOT + '/config/hotshots.ru start'
+
+  puts 'Starting Hotshots ... '
+  if system(cmd.join(' '))
+    puts 'OK'
+  else
+    puts 'FAILED'
+    puts $?
+    exit 1
+  end
+end
+
+def stop_hotshots env
+  prefix = env == 'development' ? '/tmp' : '/var/run'
+
+  return unless File.exists?('%s/hotshots.pid' % prefix)
+
+  cmd = [ ROOT + '/bin/thin' ]
+  cmd << '-S %s/hotshots.sock' % prefix
+  cmd << '-P %s/hotshots.pid'  % prefix
+  cmd << '-c /var/www/fundry stop'
+
+  puts 'Stopping Hotshots ...'
+  if system(cmd.join(' '))
+    puts 'OK'
+  else
+    puts 'FAILED'
+    puts $?
+    exit 1
+  end
+end
+
+def restart_hotshots env
+  stop_hotshots(env)
+  start_hotshots(env)
+end
+
+def start_unicorn env
+  cmd = [ ROOT + '/bin/unicorn' ]
+  cmd << '-E %s' % env
+  cmd << '-c %s/config/unicorn.rb' % ROOT
+  cmd << '-D'
+  cmd << ROOT + '/config.ru'
+
+  puts 'Starting Unicorn ... '
+  if system(cmd.join(' '))
+    puts 'OK'
+  else
+    puts 'FAILED'
+    puts $?
+    exit 1
+  end
+  system('tail -f /tmp/unicorn.stderr.log /tmp/unicorn.stdout.log') if env == 'development'
+end
+
+def stop_unicorn env
+  pid = unicorn_pid(env)
+  if pid
+    puts 'Stopping Unicorn ... '
+    Process.kill('QUIT', pid) rescue nil
+    begin
+      timeout(5) do
+        sleep 0.2 until Process.kill(0, pid) rescue nil
+      end
+      puts 'OK'
+    rescue Timeout::Error => e
+      puts 'FAILED'
+      puts 'Killing ... '
+      Process.kill('KILL', pid) rescue nil
+      puts 'OK'
+    end
+  end
+end
+
+def restart_unicorn env
+
+  # Proper restarting is a more production neccessity.
+  if env == 'development'
+    stop_unicorn(env)
+    start_unicorn(env)
+    return
+  end
+
+  pid = unicorn_pid(env)
+  if pid
+    puts 'Restarting Unicorn ...'
+
+    # spawn a new master.
+    Process.kill('USR2',  pid)
+
+    # wait for new master and check if pid has changed.
+    new_pid = nil
+    timeout(30) do
+      sleep 1
+      while new_pid == nil or new_pid == pid do
+        new_pid = unicorn_pid(env)
+      end
+    end rescue nil
+
+    raise 'Unable to restart unicorn' unless new_pid && new_pid != pid
+
+    # remove leftover oldbin pidfile.
+    FileUtils.rm_f(UNICORN_SETTINGS[env.to_sym][:pidfile] + '.oldbin')
+
+    # graceful shutdown of old master and workers.
+    Process.kill('WINCH', pid)
+    sleep 5
+    Process.kill('QUIT',  pid)
+    sleep 5
+
+    alive = Process.kill(0, pid) rescue false
+
+    if alive
+      # 30 secs grace period or whatever unicorn timeout is.
+      puts 'Old master is still running, giving it a grace 30s ttl'
+      sleep 30
+      Process.kill('TERM',  pid) rescue nil
+      Process.kill('KILL',  pid) rescue nil
+    end
+
+    puts 'OK'
+  else
+    start_unicorn(env)
+  end
+end
+
+env = 'development'
+parser = OptionParser.new do |opts|
+  opts.on('-h', '--help', 'Displays help') do
+    puts usage
+    exit
+  end
+  opts.on('-E', '--environment [development|production|failover]', 'environment') do |name|
+    env = name
+  end
+end
+
+begin
+  parser.parse!
+rescue OptionParser::InvalidOption => e
+  $stderr.puts e.message
+  $stderr.puts usage
+  exit -1
+end
+
+command = (ARGV.shift || 'help').strip
+
+case command
+  when /help/
+    puts usage
+    exit 0
+  when /^(start|stop|restart)$/
+    send('%s_hotshots' % command, env)
+    send('%s_unicorn'  % command, env)
+    exit 0
+  when /^(start|stop|restart)-unicorn$/
+    send('%s_unicorn' % $1, env)
+    exit 0
+  when /^(start|stop|restart)-shots$/
+    send('%s_hotshots' % $1, env)
+    exit 0
+  else
+    warn "#{bin}: '#{command}' is not an #{bin} command. See '#{bin} --help'."
+    exit -1
+end

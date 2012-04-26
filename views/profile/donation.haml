@@ -1,0 +1,55 @@
+!= partial :"profile/_crumbs"
+
+.leftCols
+  .outerPanel.clearfix
+    .toolbar.clearfix
+      .leftCol
+        .leftCol{style: "margin-left:-5px;"}
+          %img{src: gravatar_url(@user, 53), width:"53", height:"53"}
+        .rightCol
+          %h2.inline= @user.name.empty? ? @user.username : @user.name
+          %br
+          %small
+            Member since
+            != timeago(@user.created_at)
+      .rightCol
+        != partial :'profile/_toolbar_controls'
+
+    != partial :'profile/_profile'
+    != partial :'profile/panel/_projects'
+    != partial :'profile/_navigation'
+
+    .toolbar.clearfix
+      .leftCol
+        %h2 Donations
+
+    - if @user.donations.empty?
+      .innerPanel.clearfix
+        %p No public donations have been made
+    - else
+      - donations = paginate(@user.donations.all(anonymous: false))
+      %ul.listView
+        - donations.each do |donation|
+          %li.clearfix
+            .leftCol
+              %h3
+                %a{href: url(:project, donation.project.slug)}= donation.project.name
+              %small
+                Created
+                != timeago donation.created_at
+                \- by
+                %a{href: url(:profile, donation.user.slug), title: donation.user.name}=donation.user.name
+              .markdown
+                :safedown
+                  #{donation.message ? donation.message : 'No comments or messages.'}
+            .rightCol
+              .pledged
+                != money -donation.transfer.balance
+                Donated
+      != paginate_control donations
+
+.rightCols
+  - if authorized? @user.id
+    != partial :'profile/_account'
+  != partial :'profile/panel/_statistics'
+  != partial :'profile/panel/_activity'

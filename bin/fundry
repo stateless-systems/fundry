@@ -1,0 +1,32 @@
+#!/usr/bin/env ruby
+require File.join(File.dirname(__FILE__), '..', 'lib', 'fundry', 'cli')
+
+bin     = Fundry::Cli.bin
+command = (ARGV.shift || 'help').strip
+usage   = %Q{
+usage: #{bin} [-h|--help] command args
+
+Commands are:
+  check   System health checking.
+  config  Environment and paths.
+  db      Database operations.
+  queue   Job queue.
+  test    Unit/Integration testing.
+  web     Routes.
+
+See '#{bin} command --help' for more information on specific commands.
+}.strip
+
+if command.nil? or command =~ /^\-{0,2}h(?:elp)?$/
+  puts usage
+  exit
+end
+
+command_bin = File.join(Fundry::Cli.root, 'bin', [bin, command].join('-'))
+unless File.executable?(command_bin)
+  warn "#{bin}: '#{command}' is not an #{bin} command. See '#{bin} --help'."
+  exit -1
+end
+
+exec command_bin, *ARGV
+

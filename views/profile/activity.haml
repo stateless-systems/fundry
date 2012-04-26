@@ -1,0 +1,86 @@
+%ul#breadcrumbs.clearfix
+  %li.first
+    %a{href: '/'} Home
+  %li.second
+    %a{href: url(:profile, @user.slug)} User Profile
+  %li.third
+    Activity
+
+.leftCols
+  .outerPanel
+    .toolbar.clearfix
+      .leftCol
+        %h2 Activity
+      .rightCol
+        %ul
+          %li
+            %a{href: url(:profile, @user.slug)} Back to Profile
+
+    .innerPanel.clearfix
+      %table#activity.marginFix{cellspacing: "0"}
+        %tr
+          %th When
+          %th Event
+        - events = paginate(@user.events(order: [:created_at.desc]), limit: 50)
+        - events.each do |event|
+          - detail = event.detail
+          - case event
+            - when Fundry::Event::User::Create
+              %tr
+                %td!= timeago event.created_at
+                %td
+                  Profile created.
+            - when Fundry::Event::Project::Create
+              %tr
+                %td!= timeago event.created_at
+                %td
+                  Project
+                  %a{href: url(:project, event.project_slug)}= detail[:project][:name]
+                  created.
+            - when Fundry::Event::Feature::Create
+              %tr
+                %td!= timeago event.created_at
+                %td
+                  Feature
+                  %a{href: url(:feature, event.feature_slug)}= detail[:feature][:name]
+                  %br
+                  requested for
+                  %a{href: url(:project, event.project_slug)}= detail[:project][:name]
+            - when Fundry::Event::Pledge::Create, Fundry::Event::Pledge::Retract, Fundry::Event::Pledge::Paid, Fundry::Event::Pledge::Refunded
+              %tr
+                %td!= timeago event.created_at
+                %td
+                  != event.title
+                  != money BigMoney.new(detail[:pledge][:balance][:amount], detail[:pledge][:balance][:currency])
+                  to
+                  %a{href: url(:feature, event.feature_slug)}= detail[:feature][:name]
+            - when Fundry::Event::Payment::Deposit
+              - if authorized? @user.id
+                %tr
+                  %td!= timeago event.created_at
+                  %td
+                    Deposit
+                    != money BigMoney.new(detail[:balance][:amount], detail[:balance][:currency])
+            - when Fundry::Event::Payment::Withdraw
+              - if authorized? @user.id
+                %tr
+                  %td!= timeago event.created_at
+                  %td
+                    Withdrawal
+                    != money BigMoney.new(detail[:balance][:amount], detail[:balance][:currency])
+            - when Fundry::Event::Donation::Create
+              - if (detail[:donation][:anonymous] and authorized?(@user.id)) or !detail[:donation][:anonymous]
+                %tr
+                  %td!= timeago event.created_at
+                  %td
+                    Donated
+                    != money BigMoney.new detail[:donation][:balance][:amount], detail[:donation][:balance][:currency]
+                    to
+                    %a{href: url(:project, event.project_slug)}= detail[:project][:name]
+
+        != paginate_control events
+
+.rightCols
+  - if authorized? @user.id
+    != partial :'profile/_account'
+  != partial :'profile/panel/_statistics'

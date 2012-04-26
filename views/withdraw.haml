@@ -1,0 +1,39 @@
+%ul#breadcrumbs.clearfix
+  %li.first
+    %a{href: '/'} Home
+  %li.second
+    %a{href: '/profile'} User Profile
+  %li.third
+    Withdraw
+
+.leftCols
+  .outerPanel
+    .toolbar.clearfix
+      .leftCol
+        %h2 Withdraw
+      .rightCol
+        %ul
+          %li
+            %a{href: '/profile'} Back to Profile
+
+    .innerPanel.clearfix
+      %p When you click ‘Withdraw’ you’ll be taken to PayPal where you’ll need to sign in with your PayPal account and confirm the withdrawal.
+
+      %form#deposit{method: 'post', action: '/withdraw'}
+        %fieldset
+          %legend
+          %ul
+            %li
+              %label{for: 'withdraw_paypal'} PayPal Email:
+              %input#withdraw_paypal{type: 'text', name: 'withdraw[paypal]', value: @paypal}
+            %li
+              %label{for: 'withdraw_amount'} Amount USD:
+              %input#paypal_fee{type: 'hidden', value: 0}
+              %input#paypal_cut{type: 'hidden', value: 2}
+              %input#withdraw_amount{type: 'text', name: 'withdraw[amount]', value: @amount}
+              %small#withdraw_charges.clearfix
+        %button{type: 'submit'} Withdraw
+
+.rightCols
+  != partial :'/profile/_account'
+

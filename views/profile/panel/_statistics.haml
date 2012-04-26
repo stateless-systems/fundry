@@ -1,0 +1,36 @@
+#statistics
+  .toolbar.clearfix.toolsFix
+    .leftCol
+      %h3 Funding
+
+  .panel
+    %ul
+      %li.totalPledged
+        != money @user.meta.pledge_pending_balance
+        %strong
+          Pledged to
+          = @user.meta.pledge_pending
+          features
+      %li.totalFeatures
+        != money @user.meta.pledge_complete_balance
+        %strong
+          Paid to
+          = @user.meta.pledge_complete
+          features
+      %li.totalDonated
+        != money @user.meta.donation_balance
+        %strong
+          Donated to
+          = @user.meta.donation
+          projects
+      %li
+        - # TODO: Really? This one seems over the top.
+        != money @user.meta.withdrawn_balance
+        %strong
+          Withdrawn
+      %li
+        %strong
+          = @user.meta.pledge_objection
+          objections /
+          = @user.meta.pledge_approval
+          approvals made

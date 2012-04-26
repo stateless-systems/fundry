@@ -1,0 +1,127 @@
+#!/bin/bash
+
+cd /var/www/fundry
+
+new_tag=RELEASE-$(date +%Y%m%dT%H%M%S)
+old_tag=$(git tag -l RELEASE* | sort -r | head -n1)
+old_tag=${old_tag:-"HEAD^"}
+daemons=""
+migrations=""
+
+update_gems() {
+  echo 'updating bundled gems if needed ...'
+  logs=`gem bundle --cached 2>&1`
+
+  if [ $? != 0 ]; then
+    echo "failed to gem bundle: $! $logs" | mail -s "failed to restart fundry coz bundler cocked up" root
+    exit 1
+  fi
+}
+
+# reset crontab, delete old ones and install new ones
+update_crontab() {
+  echo 'setting up new crontab if needed ...'
+  cat config/cron/* | crontab -
+}
+
+restart_web() {
+  sudo monit unmonitor fundry-unicorn
+  sudo monit unmonitor fundry-shots
+  echo 'restarting unicorn due to change in lib'
+  ./bin/fundry-web -E production restart
+
+  if [ "x$?" != "x0" ]; then
+    echo "failed to restart web" | mail -s "post-merge web restart failed" root
+    exit 1
+  fi
+
+  sudo monit monitor fundry-shots
+  sudo monit monitor fundry-unicorn
+}
+
+restart_fundry_queue() {
+  echo 'restarting fundry-queue due to change in lib'
+  sudo monit restart fundry-queue
+}
+
+restart_daemons() {
+  libs=$(git diff $old_tag | grep "^--- a/\(lib\|views\)" | grep -v "/cli/")
+  if [ "x$libs" != "x" ]; then
+    restart_web
+    restart_fundry_queue
+    daemons="$daemons unicorn hotshots-proxy"
+  fi
+
+  config=$(git diff $old_tag | grep "^--- a/config/nginx/production")
+  if [ "x$config" != "x" ]; then
+    daemons="$daemons nginx"
+    sudo /etc/init.d/nginx reload
+  fi
+
+  config=$(git diff $old_tag | grep "^--- a/config/varnish")
+  if [ "x$config" != "x" ]; then
+    daemons="$daemons varnish"
+    sudo /etc/init.d/varnish reload
+  fi
+}
+
+update_postfix() {
+  sudo cp config/postfix/aliases /etc/
+  sudo newaliases
+  sudo /etc/init.d/postfix reload
+}
+
+# IMPORTANT ------------------------------------------------------------------------------------------
+# You should run only one migration script per deploy.
+# Make sure to wrap all DDL, DML in one transaction block to avoid surprises in case something fails.
+#-----------------------------------------------------------------------------------------------------
+run_migrations() {
+  echo 'running migrations if any added ...'
+  for file in `git diff --summary $old_tag  | grep "create mode [0-9]\+ migrations" | sed s'/^.* migrations.//'`; do
+    if [ -x migrations/$file ]; then
+      echo "running $file"
+      migrations="$migrations $file"
+      ./migrations/$file >>/tmp/$$.migrate.log 2>&1
+
+      if [ $? != 0 ]; then
+        cat /tmp/$$.migrate.log | mail -s "migrations failed. fundry not restarted." systems
+        exit 1
+      fi
+    fi
+  done
+}
+
+print_changelog() {
+
+cat<<EOM
+
+Hi,
+
+Fundry updated on production.
+
+The following migrations were run:
+
+${migrations:-"No migrations scripts added since last deploy"}
+
+The following daemons were reloaded/restarted:
+
+${daemons:-"None restarted."}
+
+Fundry has been restarted with the following changes
+
+====================================================
+
+$(git log --stat --no-color $old_tag..HEAD)
+
+EOM
+
+}
+
+update_gems
+run_migrations
+update_crontab
+update_postfix
+restart_daemons
+
+git tag $new_tag
+print_changelog | mail -s "Restarted Fundry" systems

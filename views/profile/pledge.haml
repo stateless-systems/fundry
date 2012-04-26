@@ -1,0 +1,58 @@
+!= partial :"profile/_crumbs"
+
+.leftCols
+  .outerPanel.clearfix
+    .toolbar.clearfix
+      .leftCol
+        .leftCol{style: "margin-left:-5px;"}
+          %img{src: gravatar_url(@user, 53), width: "53", height:"53"}
+        .rightCol
+          %h2.inline
+            = @user.name.empty? ? @user.username : @user.name
+            - if @user.suspended?
+              %sup.rejected Deactivated
+            - elsif @user.deactivated_at
+              %sup.rejected Deleted
+          %br
+          %small
+            Member since
+            != timeago(@user.created_at)
+      .rightCol
+        != partial :'profile/_toolbar_controls'
+
+
+    != partial :'profile/_profile'
+    != partial :'profile/panel/_projects'
+    != partial :'profile/_navigation'
+
+    .toolbar.clearfix
+      .leftCol
+        %h2 Pledges
+
+    - if @user.pledges.empty?
+      .innerPanel.clearfix
+        %p No pledges have been made
+    - else
+      - pledges = paginate(@user.pledges)
+      %ul.listView
+        - pledges.each do |pledge|
+          %li.clearfix
+            .new
+            .leftCol
+              %h3
+                %a{href: url(:project, pledge.feature.project.slug)}= pledge.feature.project.name
+              %small
+                != timeago pledge.created_at
+              %p
+                %a{href: url(:feature, pledge.feature.slug)}= pledge.feature.name
+            .rightCol
+              .pledged
+                != money -pledge.transfer.balance
+                Pledged
+      != paginate_control pledges
+
+.rightCols
+  - if authorized? @user.id
+    != partial :'profile/_account'
+  != partial :'profile/panel/_statistics'
+  != partial :'profile/panel/_activity'

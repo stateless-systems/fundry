@@ -1,0 +1,36 @@
+#!/bin/bash
+
+export PATH=$PATH:/usr/sbin:/sbin
+
+header() {
+  echo ""
+  echo $1
+  echo ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  echo ""
+}
+
+monit_stats() {
+  header "Monit"
+  sudo monit summary
+}
+
+beanstalk_stats() {
+  header "Beanstalk"
+  echo -e "stats\r\nquit\r\n" | nc 127.0.0.1 11300 | grep current | grep -v binlog
+}
+
+postfix_stats() {
+  header "Postfix"
+  postqueue -p
+}
+
+system_stats() {
+  header "System"
+  top -b -n1 | grep -v "^[ 0-9]"
+}
+
+TZ=":Australia/Melbourne" date
+monit_stats
+system_stats
+beanstalk_stats
+postfix_stats

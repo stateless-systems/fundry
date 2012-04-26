@@ -1,0 +1,8 @@
+# hourly dumps 5min past the hour.
+05 * * * *    cd /var/www/fundry && ./bin/fundry-db-dump create >> /tmp/dbdump.log
+
+# cleanup previous day's hourly dumps except 01:00 hrs.
+30 01 * * *   cd /var/www/fundry && ./bin/fundry-db-dump cleanup_hourly >> /tmp/dbdump.log
+
+# cleanup previous months's daily dumps except the one for 1st day.
+30 03 01 * *  cd /var/www/fundry && ./bin/fundry-db-dump cleanup_daily >> /tmp/dbdump.log

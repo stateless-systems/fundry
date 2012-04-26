@@ -1,0 +1,11 @@
+.leftCols
+  .outerPanel
+    .toolbar.clearfix
+      .leftCol
+        %h2 Recover profile
+      .rightCol
+  
+    .innerPanel.clearfix
+      %p
+        A profile recovery email has been sent for the account
+        %a{href: url(:profile, @user.slug)}= @user.username

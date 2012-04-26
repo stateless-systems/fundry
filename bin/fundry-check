@@ -1,0 +1,30 @@
+#!/usr/bin/env ruby
+require_relative '../lib/fundry/cli'
+require_relative '../lib/fundry/cli/check'
+require 'mailman'
+
+bin     = Fundry::Cli.bin
+command = (ARGV.shift || 'help').strip
+usage   = %Q{
+  usage: #{bin} [-h|--help] command
+
+  Commands are:
+    transfers  Check transfer table consistency.
+    balances   Check if account balance cache is updated properly.
+}.strip
+
+def transfers
+  Fundry::Cli::Check.new(Fundry::Pledge.repository.adapter).transfers
+  system('echo "fundry check was run" | mail -s "fundry transfers" root')
+end
+
+def balances
+  Fundry::Cli::Check.new(Fundry::Pledge.repository.adapter).balances
+end
+
+case command
+  when /^\-{0,2}h(?:elp)?$/, nil then puts usage
+  when 'transfers'               then transfers
+  when 'balances'                then balances
+  else warn("#{bin}: '#{command}' is not an #{bin} command. See '#{bin} --help'.") && exit(-1)
+end

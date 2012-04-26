@@ -1,0 +1,21 @@
+#!/usr/bin/env ruby
+require_relative '../lib/fundry/cli'
+
+bin      = Fundry::Cli.bin
+command  = (ARGV.shift || 'help').strip
+usage    = %Q{
+usage: #{bin} [-h|--help] command
+
+Commands are:
+  all         All test.
+  unit        Unit tests.
+  integration Integration tests.
+}.strip
+
+case command
+  when /^\-{0,2}h(?:elp)?$/, nil then puts usage
+  when 'all'                     then Dir.glob("#{Fundry.root}/test/**/test_*.rb"){|f| require f}
+  when 'unit'                    then Dir.glob("#{Fundry.root}/test/unit/**/test_*.rb"){|f| require f}
+  when 'integration'             then Dir.glob("#{Fundry.root}/test/integration/**/test_*.rb"){|f| require f}
+end
+

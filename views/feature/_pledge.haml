@@ -1,0 +1,39 @@
+- unless ['complete', 'rejected'].include? @feature.state
+  #pledgePanel.clearfix
+
+    - if @project.verified? and @project.user.active?
+      .leftCol
+        %h3= @pledge ? 'Change your pledge' : 'Pledge to this feature'
+        -# %a{name: 'pledge'}
+        %form{id: @pledge ? 'alter_pledge' : nil, method: 'post', action: url(:feature, @feature.id, :pledge)}
+          %fieldset.left
+            %legend
+            %ul
+              %li#pledgeAmount
+                %label{for: 'pledge_amount'} Pledge Amount:
+                %input#pledge_amount{name: 'pledge[amount]', value: @balance, size: 18}
+          %button.buttonFix{type: 'submit'} Pledge
+
+    - if @pledge
+      .rightCol
+        %h3 Your current pledge
+        .left
+          .totalPledged
+            != money @pledge.transfer.children.last.balance
+        %form.left#retract_pledge{method: 'post', action: url(:feature, @feature.id, :pledge)}
+          %fieldset
+            %input{type: 'hidden', name: '_method', value: 'DELETE'}
+          %button{type: 'submit'} Retract
+    - else
+      .rightCol
+        %ul.left
+          %li
+            %span 1.
+            Pledge funds for this feature.
+          %li
+            %span 2.
+            Wait till user develops it.
+          %li
+            %span 3.
+            If you like, then vote to approve.
+        %img{src: '/art/images/pledgeFeature.png'}

@@ -1,0 +1,167 @@
+%ul#breadcrumbs.clearfix
+  %li.first
+    %a{href: '/'} Home
+  %li.second
+    %a{href: '/profile'} User Profile
+  %li.third
+    Admin
+
+#admin.leftCols
+  .outerPanel.clearfix
+    .toolbar.summary.clearfix
+      .leftCol
+        .leftCol
+          %img{src: gravatar_url(user, 53), width: "53", height:"53"}
+        .rightCol
+          %h2.inline= user.name.empty? ? user.username : user.name
+          %br
+          %small
+            Member since
+            != timeago(user.created_at)
+      .rightCol
+        - statistics = Fundry::Statistics.new(params[:period])
+        :javascript
+          var period = '#{params[:period]}';
+
+    .toolbar.arrow.clearfix
+      .leftCol
+        %h2 Statistics
+      .rightCol
+        %ul
+          %li#1d
+            %a{href: request.path_info + '?period=1d'} 1d
+          %li#3d
+            %a{href: request.path_info + '?period=3d'} 3d
+          %li#1w
+            %a{href: request.path_info + '?period=1w'} 1w
+          %li#1m
+            %a{href: request.path_info + '?period=1m'} 1m
+          %li#6m
+            %a{href: request.path_info + '?period=6m'} 6m
+          %li#1y
+            %a{href: request.path_info + '?period=1y'} 1y
+          %li#all
+            %a{href: request.path_info} current
+
+    %table#projects.marginFix{cellspacing: "0"}
+      %thead
+        %th Type
+        %th Totals
+      %tbody
+        %tr
+          %td{width: "70%"} Escrow Balance
+          %td{width: "30%"}!= money statistics.escrow_balance
+        %tr
+          %td Escrow Deposits
+          %td!= money statistics.escrow_deposits
+        %tr
+          %td Escrow Withdrawals
+          %td!= money statistics.escrow_withdrawals
+        %tr
+          %td Fundry Income (Commissions)
+          %td!= money statistics.income
+        %tr
+          %td Total Users
+          %td!= statistics.users
+        %tr
+          %td Total Projects
+          %td!= statistics.projects
+        %tr
+          %td Total Features
+          %td!= statistics.features_created
+        %tr
+          %td Total Completed Features
+          %td!= statistics.features_completed
+        %tr
+          %td Total Pledges
+          %td!= statistics.pledges
+        %tr
+          %td Total Pledged
+          %td!= money statistics.pledged
+        %tr
+          %td Total Funded
+          %td!= money statistics.funded
+
+    .toolbar.clearfix
+      .leftCol
+        %h3 Admin - Login as user
+    .innerPanel.clearfix
+      %form#pretend{action: '/admin/pretend', method: 'post'}
+        %fieldset
+          %input{name: 'profile'}
+          %button Login
+
+    .toolbar.clearfix
+      .leftCol
+        %h3 Admin - Abuse reports
+    - reports = statistics.abuse_reports
+    - if reports.empty?
+      .innerPanel.clearfix
+        %p None found
+    - else
+      %table#projects.marginFix{cellspacing: "0"}
+        %thead
+          %th Project
+          %th Reports
+        %tbody
+          - reports.each do |project|
+            %tr
+              %td{width: "70%"}
+                %img.favicon{src: "/shots/#{project.id}/favicon", height: "16", width: "16"}
+                %a{href: url(:project, String::Slug.new('%d-%s' % [ project.id, project.name ]))}= project.name
+              %td{width: "30%"}
+                != project.complaints
+
+    .toolbar.clearfix
+      .leftCol
+        %h3 Admin - Suspended users
+    - users = Fundry::User.all(:suspended_at.not => nil)
+    - if users.empty?
+      .innerPanel.clearfix
+        %p None found
+    - else
+      %table#projects.marginFix{cellspacing: "0"}
+        %thead
+          %th User
+          %th Suspended at
+        %tbody
+          - users.each do |user|
+            %tr
+              %td{width: "70%"}
+                %a{href: url(:profile, user.slug)}= user.name
+              %td{width: "30%"}
+                != mailtime user.suspended_at
+.rightCols
+  #statistics
+    .toolbar.clearfix
+      .leftCol
+        %h3 Project Summary
+    .panel
+      - recent = Time.now-86400*2..Time.now
+      %table#projects{cellspacing: "0"}
+        %thead
+          %th Status
+          %th Total
+          %th &nbsp;
+        %tr
+          %td
+            Projects awaiting confirmation
+          %td.center
+            = Fundry::Project.count_awaiting_confirmation
+          %td.right
+            %a.button{href: url(:admin, :verification, :confirm)} Verfiy
+        %tr
+          %td
+            Recently added projects still unverified
+          %td.center
+            = Fundry::Project.count(verified: false, verifications: {rank: 0, created_at: recent})
+          %td.right
+            %a.button{href: url(:admin, :verification, :recent)} Verfiy
+        %tr
+          %td
+            All unverified projects
+          %td.center
+            = Fundry::Project.count(verified: false)
+          %td.right
+            %a.button{href: url(:admin, :verification, :all)} Verfiy
+

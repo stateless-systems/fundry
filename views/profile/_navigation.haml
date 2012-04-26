@@ -1,0 +1,15 @@
+%ul.tabs.clearfix
+  %li.pledges
+    %a{href: (authorized?(@user.id) ? url(:profile, :pledge)   : url(:profile, @user.slug, :pledge))}
+      = "Pledges (#{@user.pledges.size})"
+  %li.donations
+    %a{href: (authorized?(@user.id) ? url(:profile, :donation) : url(:profile, @user.slug, :donation))}
+      = "Donations (#{@user.donations.size})"
+  %li.comments
+    %a{href: (authorized?(@user.id) ? url(:profile, :comment)  : url(:profile, @user.slug, :comment))}
+      = "Comments (#{@user.comments.size})"
+  - if authorized?(@user.id)
+    %li.inbox
+      %a{href: url(:profile, :inbox)}
+        = "Inbox (#{@user.emails.count})"
+

@@ -1,0 +1,37 @@
+
+- unless authenticated?
+  != partial :_start
+!= partial :_navigation
+
+.toolbar.clearfix
+  .leftCol
+    %h2 Pledges
+  .rightCol
+    != partial :_navigation_order
+
+.outerPanel.clearfix
+  - if @pledges.empty?
+    %p.empty No pledges.
+  - else
+    - pledges = paginate(@pledges)
+    %ul.gridView.clearfix
+      - pledges.each do |pledge|
+        %li.clearfix
+          %img{src: gravatar_url(pledge.transfer.user, 53), width:"53", height:"53", alt: pledge.transfer.user.name, title: pledge.transfer.user.name}
+          .leftCol
+            %h3
+              %a{href: url(:feature, pledge.feature.slug)}= pledge.feature.name
+            %p
+              %img.favicon{src: "/shots/#{pledge.feature.project.id}/favicon", height: "16", width: "16", alt: pledge.feature.project.name, title: pledge.feature.project.name}
+              %a{href: url(:project, pledge.feature.project.slug)}= pledge.feature.project.name
+            %small
+              Pledged
+              != timeago pledge.created_at
+              \- by
+              %a{href: url(:profile, pledge.transfer.user.slug)}= pledge.transfer.user.name
+          .rightCol
+            .pledged
+              != money -pledge.transfer.balance
+              Pledged
+    != paginate_control pledges
+

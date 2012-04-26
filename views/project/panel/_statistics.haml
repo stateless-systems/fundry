@@ -1,0 +1,27 @@
+#statistics
+  .toolbar.clearfix.toolsFix
+    .leftCol
+      %h3 Funding
+    - if @project.verified and @project.user.active?
+      .rightCol
+        %ul
+          %li
+            %a{href: url(:project, @project.slug, :donation, :new)} Donate to project
+
+  .panel
+    %ul
+      %li.totalPledged
+        != money @project.meta.pledge_pending_balance
+        %strong
+          Pledged towards features
+          = '(%d pledges)' % @project.meta.pledge_pending
+      %li.totalFeatures
+        != money @project.meta.pledge_complete_balance
+        %strong
+          Paid to completed features
+          - if @project.meta.pledge_complete > 0
+            = '(%d pledges)' % @project.meta.pledge_pending
+      %li.totalDonated
+        != money @project.meta.donation_balance
+        %strong
+          Donated to the project

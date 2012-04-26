@@ -1,0 +1,38 @@
+# See /usr/share/postfix/main.cf.dist for a commented, more complete version
+
+# Debian specific:  Specifying a file name will cause the first
+# line of that file to be used as the name.  The Debian default
+# is /etc/mailname.
+#myorigin = /etc/mailname
+
+smtpd_banner = $myhostname ESMTP $mail_name
+biff         = no
+
+# appending .domain is the MUA's job.
+append_dot_mydomain = no
+readme_directory    = no
+
+# TLS parameters
+smtpd_tls_cert_file = /var/www/fundry/config/ssl/prod/fundry.crt
+smtpd_tls_key_file  = /var/www/fundry/config/ssl/prod/fundry.key
+smtpd_use_tls       = yes
+smtpd_tls_session_cache_database = btree:${data_directory}/smtpd_scache
+smtp_tls_session_cache_database  = btree:${data_directory}/smtp_scache
+
+myhostname                 = fundry.com
+alias_maps                 = hash:/etc/aliases
+alias_database             = hash:/etc/aliases
+myorigin                   = /etc/mailname
+mydestination              = fundry.com, localhost
+mynetworks                 = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128
+mailbox_size_limit         = 0
+recipient_delimiter        = +
+inet_interfaces            = all
+
+# TODO sender dependent relayhost maps.
+smtp_sasl_auth_enable      = yes
+smtp_sasl_password_maps    = static:systems@fundry.com:fundry5ys|3ms
+smtp_sasl_security_options = noanonymous
+smtp_tls_security_level    = may
+header_size_limit          = 4096000
+relayhost                  = [smtp.sendgrid.net]:587

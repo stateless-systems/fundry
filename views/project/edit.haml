@@ -1,0 +1,23 @@
+%ul#breadcrumbs.clearfix
+  %li.first
+    %a{href: '/'} Home
+  %li.second
+    %a{href: '/profile'} User Profile
+  %li.third
+    Edit Project
+
+.outerPanel
+  .toolbar.clearfix
+    .leftCol
+      %h2 Edit project
+    .rightCol
+
+  .innerPanel.clearfix
+    %form#project{method: 'post', action: url(:project, @project.id)}
+      %fieldset
+        %legend Edit project
+        %input{type: 'hidden', name: '_method', value: 'put'}
+        != partial :'project/_fields'
+      %button{type: 'submit'} Update
+
+  #markdownReference-modal

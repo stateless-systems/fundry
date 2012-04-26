@@ -1,0 +1,38 @@
+.innerPanel.clearfix
+  .leftCol
+    .markdown
+      :safedown
+        #{@project.detail}
+
+    %h3 Share this project
+
+    %ul.socialNetworking.clearfix
+      - if @project.verified
+        %li
+          %a#fundry-widget-modal{href: "#", alt: "fundry widget", title: "fundry widget"}
+      %li
+        - @tweet_title = 'Fund ' + @project.name + ' on Fundry. '
+        != partial :_tweet
+
+    != partial :"project/_widget"
+
+  .rightCol
+    #imgHolder
+      .box
+        %a{href: sanitized_url(@project.web), rel: 'nofollow', target: '_new'}
+          %img{src: "/shots/#{@project.id}/medium", alt: @project.name, title: @project.name, width:"300", height:"225"}
+        %a.link.tipsie-e{href: sanitized_url(@project.web), target: '_new', title: "Visit #{@project.name}", rel: 'nofollow'} visit website
+      - unless authorized? @project.user_id
+        .flag-abuse.tipsie{title: 'Flag project for abuse'}
+          %a{href: url(:project, @project.slug, :report)}
+
+      %dl.profile.clearfix
+        %dt
+          %a{href: url(:profile, @project.user.slug)}
+            %img.imgLeft{src: gravatar_url(@project.user, 40), width:"40", height:"40", alt: @project.user.name, title: @project.user.name}
+        %dd
+          %a{href: url(:profile, @project.user.slug), title: @project.user.name}
+          %small
+            Owner / Lead Developer
+            %br
+            %a{href: url(:profile, @project.user.slug)}= @project.user.name

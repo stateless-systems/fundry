@@ -1,0 +1,23 @@
+%ul
+  %li
+    %label{for: 'project_name'} Project Name:
+    %input#project_name.formsy{type: 'text', name: 'project[name]', value: @project.name, size: 64, title: 'Once you’ve created the project you or your community can add feature requests.'}
+    %span#project_name_remaining{class: 'cremaining'}
+
+  %li
+    %label{for: 'project_web'} Web:
+    %input#project_web.formsy{type: 'text', name: 'project[web]', value: @project.web, size: 64, title: 'We’ll grab a screenshot of your project from the web address you provide.'}
+
+  %li
+    %label{for: 'project_summary'} Summary:
+    %input#project_summary.formsy{type: 'text', name: 'project[summary]', value: @project.summary, size: 64, title: 'Please add some details about your project.'}
+    %span#project_summary_remaining{class: 'cremaining'}
+
+  %li
+    %label{for: 'project_detail'}
+      Detailed description (markdown accepted):
+      %a.markdownReference{href: '#'} ?
+    %textarea#project_detail.markdown-input.resizable{name: 'project[detail]'}= @project.detail
+  %li.markdown-preview-container
+    %label Preview:
+    .markdown-preview.markdown.innerPanel

@@ -1,0 +1,30 @@
+!= partial :'feature/_crumbs'
+
+.outerPanel.clearfix
+
+  != partial :'feature/_project'
+  != partial :'project/_verification'
+
+  - if authorized?(@project.user_id)
+    != partial :'feature/_add'
+  - elsif @project.verified?
+    .toolbar.arrow.clearfix
+      .leftCol
+        %h2 Fund a new feature
+    .innerPanel.clearfix
+      %form#project{method: 'post', action: "/feature"}
+        %fieldset
+          %legend Fund a new feature
+          != partial :"feature/_form"
+          %ul
+            %li.checkbox
+              %br
+              %input{type: 'checkbox', name: 'tc', id: 'tc'}
+              %label{for: 'tc'}
+                I agree to the
+                %a.terms{href: '#'} terms and conditions
+
+          %button{type: 'submit'} Pledge
+
+#markdownReference-modal
+#terms-modal

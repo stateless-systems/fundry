@@ -1,0 +1,53 @@
+!= partial :'project/_crumbs'
+
+.leftCols
+  .outerPanel.clearfix
+
+    != partial :'project/_toolbar'
+    != partial :'project/_verification'
+    != partial :'project/_project'
+    != partial :'project/_navigation'
+
+    .toolbar.clearfix.heightFix
+      .leftCol
+        %h3 Project donations
+      .rightCol
+        - unless @donations.empty?
+          != partial :_navigation_order
+
+    - if @donations.empty?
+      .innerPanel.clearfix
+        %p
+          - if @project.user.active?
+            No donations yet, be the first to
+            %a{href: url(:project, @project.slug, :donation, :new)} donate to this project
+          - else
+            No donations yet.
+    - else
+      %ul.listView.clearfix
+        - donations = paginate(@donations)
+        - donations.each do |donation|
+          %li.clearfix
+            %img.user{src: gravatar_url(donation.user, 53), width: "53", height: "53"}
+            .leftCol
+              %h3
+                %a{href: url(:profile, donation.user.slug), title: donation.user.name}=donation.user.name
+              %small
+                Donated
+                != timeago donation.created_at
+              .markdown.comments
+                :safedown
+                  #{donation.message ? donation.message : 'No comments or messages.'}
+            .rightCol
+              .pledged
+                != money -donation.transfer.balance
+                Donated
+      != paginate_control donations
+
+  - unless @donations.empty?
+    != partial :'project/_funding'
+
+.rightCols
+  != partial :'project/panel/_statistics'
+  != partial :'project/panel/_activity'
+

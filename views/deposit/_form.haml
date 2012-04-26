@@ -1,0 +1,7 @@
+%ul
+  %li
+    %label{for: 'deposit_amount'} Amount USD:
+    %input#deposit_amount{type: 'text', name: 'deposit[amount]', value: @amount}
+    %input#paypal_fee{type: 'hidden', value: @paypal_fee}
+    %input#paypal_cut{type: 'hidden', value: @paypal_cut}
+    %small.clearfix#paypal_charges

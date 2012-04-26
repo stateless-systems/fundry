@@ -1,0 +1,4 @@
+#!/bin/bash
+
+cd /var/www/fundry
+./bin/fundry payment features -c `date +%Y-%m-%dT%H:%M:%S -d '1 week ago'`

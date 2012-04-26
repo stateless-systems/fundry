@@ -1,0 +1,93 @@
+#!/bin/bash
+
+cd /var/www/fundry
+
+update_gems() {
+  echo 'updating bundled gems if needed ...'
+  logs=`gem bundle --cached 2>&1`
+
+  if [ $? != 0 ]; then
+    echo "failed to gem bundle: $! $logs" | mail -s "failed to restart fundry coz bundler cocked up" root
+    exit 1
+  fi
+}
+
+# reset crontab, delete old ones and install new ones
+update_crontab() {
+  echo 'setting up new crontab if needed ...'
+  cat config/cron/* | crontab -
+}
+
+restart_web() {
+  sudo monit unmonitor fundry-unicorn
+  sudo monit unmonitor fundry-shots
+  echo 'restarting unicorn'
+  ./bin/fundry-web -E failover restart
+
+  if [ "x$?" != "x0" ]; then
+    echo "failed to restart web" | mail -s "post-merge web restart failed" root
+    exit 1
+  fi
+
+  sudo monit monitor fundry-shots
+  sudo monit monitor fundry-unicorn
+}
+
+restart_fundry_queue() {
+  echo 'restarting fundry-queue'
+  sudo monit restart fundry-queue
+}
+
+restart_daemons() {
+  restart_web
+  restart_fundry_queue
+  daemons="$daemons uniforn hotshots-proxy"
+
+  config=$(git diff $old_tag | grep "^--- a/config/nginx/production")
+  if [ "x$config" != "x" ]; then
+    daemons="$daemons nginx"
+    sudo /etc/init.d/nginx reload
+  fi
+
+  config=$(git diff $old_tag | grep "^--- a/config/varnish")
+  if [ "x$config" != "x" ]; then
+    daemons="$daemons varnish"
+    sudo /etc/init.d/varnish reload
+  fi
+}
+
+update_postfix() {
+  sudo cp config/postfix/aliases /etc/
+  sudo newaliases
+  sudo /etc/init.d/postfix reload
+}
+
+print_changelog() {
+
+cat<<EOM
+
+Hi,
+
+Fundry updated on replica.
+
+The following daemons were reloaded/restarted:
+
+${daemons:-"None restarted."}
+
+Fundry on replica has been restarted with the following changes
+
+===============================================================
+
+$(git log --stat --no-color $old_tag..HEAD)
+
+EOM
+
+}
+
+update_gems
+update_crontab
+update_postfix
+restart_daemons
+
+git tag $new_tag
+print_changelog | mail -s "Restarted Fundry Replica" root

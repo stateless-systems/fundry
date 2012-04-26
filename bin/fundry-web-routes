@@ -1,0 +1,38 @@
+#!/usr/bin/env ruby
+require_relative '../lib/fundry/cli'
+require 'fundry/web'
+
+bin     = Fundry::Cli.bin
+command = (ARGV.shift || 'display').strip
+usage   = %Q{
+  usage: #{bin} [-h|--help] command
+
+  Commands are:
+    display  Display HTTP routes.
+}.strip
+
+def display
+  %w{GET PUT POST HEAD DELETE}.each do |verb|
+    puts "\n#{verb.rjust(6)}:\n"
+    Fundry::Web.routes[verb].each do |r|
+      puts "\t" + r[0].source.
+         # remove lhs anchor.
+         sub(/^\s*\^\s*\/\s*/, '/').
+         # remove trailing optional slash (canonical).
+         sub(/(?:\s*\/\s*\?\s*)?\$\s*$/, '').
+         # massage named captures into more visually simpler expression.
+         gsub(/\\\//, '/').gsub(/\/?\s*\(\?:?.*?<([^>]+)>([^)]+)\)\??/, "/:\\1{\\2}").
+         # remove round brackets off named captures.
+         gsub(/\)\s*\??\s*(\/|$)/, '\1').
+         # general prettification.
+         gsub(/{/, '(').gsub(/}/, ')').gsub(/\(\[\^\/\?&#\]\+\)/, '').strip
+    end
+  end
+end
+
+case command
+  when /^\-{0,2}h(?:elp)?$/, nil then puts usage
+  when 'display'                 then display
+  else warn("#{bin}: '#{command}' is not an #{bin} command. See '#{bin} --help'.") && exit(-1)
+end
+

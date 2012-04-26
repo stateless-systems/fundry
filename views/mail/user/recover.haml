@@ -1,0 +1,10 @@
+:markdown
+  Dear #{user.name || user.username},
+
+  An account recovery request was made for #{user.username}, http://fundry.com/profile/#{user.slug}
+
+  You may alter your password at: https://fundry.com/recover/#{user.password_reset}
+
+  Sincerely,
+
+  The Fundry Geek Squad

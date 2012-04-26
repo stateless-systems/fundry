@@ -1,0 +1,10 @@
+%ul.tabs.clearfix
+  %li.features
+    %a{href: url(:project, @project.slug, :feature)}= "Features (#{@project.features.size})"
+  %li.pledges
+    %a{href: url(:project, @project.slug, :pledge)}= "Pledges (#{@project.features.pledges.size})"
+  %li.donations
+    %a{href: url(:project, @project.slug, :donation)}= "Donations (#{@project.donations.size})"
+  %li.comments
+    %a{href: url(:project, @project.slug, :comment)}= "Comments (#{@project.features.comments.size})"
+

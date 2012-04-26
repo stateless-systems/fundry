@@ -1,0 +1,46 @@
+%ul#breadcrumbs.clearfix
+  %li.first
+    %a{href: '/'} Home
+  %li.second
+    Contact Fundry
+
+.outerPanel
+  .toolbar.clearfix
+    .leftCol
+      %h2 Contact
+    -#.rightCol
+    -#  %small= Time.now.strftime('%d %B %Y')
+
+  .innerPanel.clearfix
+    .info
+      Please have a read through the &nbsp;
+      %a{href: url(:faq)}> frequently asked questions
+      , we constantly update them with helpful information.
+    %form{method: 'post', action: url(:contact)}
+      %fieldset
+        %legend Contact
+        %ul
+          %li
+            %label{for: 'contact_name'} Your Name:
+            %input#contact_name{type: 'text', name: 'contact[name]', value: @user.name || @user.username}
+
+            %input#contact_username{type: 'hidden', name: 'contact[username]', value: @user.username}
+
+          %li
+            %label{for: 'contact_email'} Contact Email:
+            %input#contact_email{type: 'text', name: 'contact[email]', value: @user.email}
+
+          %li
+            %label{for: 'contact_subject'} Subject:
+            %input#contact_subject{type: 'text', name: 'contact[subject]', value: @subject}
+
+          %li
+            %label{for: 'contact_message'} Message:
+            %textarea#contact_message.resizable{name: 'contact[message]'}= @message
+
+          %li.captcha
+            %label{for: 'captcha'} Enter the letters below:
+            != captcha(ajax: false)
+
+      %button{type: 'submit'} Send
+

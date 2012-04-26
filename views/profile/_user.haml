@@ -1,0 +1,29 @@
+.innerPanel.clearfix
+  - if @user.active? or authorized?(@user.id)
+    %dl.profile2
+      %dt
+        %p Email:
+      %dd
+        :javascript
+          eval(decodeURIComponent('#{mailto @user}'));
+      - unless @user.web.blank?
+        %dt
+          %p Web:
+        %dd
+          %a{href: sanitized_url(@user.web)}= @user.web
+      - unless @user.twitter.blank?
+        %dt
+          %p Twitter:
+        %dd
+          %a{href: "http://www.twitter.com/#{@user.twitter}", target: '_blank'}= '@' + @user.twitter
+
+    - unless @user.bio.blank?
+      %h3 User Bio
+      .markdown
+        :safedown
+          #{@user.bio}
+  - elsif @user.suspended?
+    %p This account has been temporarily deactivated.
+  - elsif @user.deactivated_at
+    %p This account has been deleted.
+

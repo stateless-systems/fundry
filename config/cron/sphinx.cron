@@ -1,0 +1,2 @@
+# add this cronjob on production server
+*/3 * * * * sudo indexer --all --rotate > /dev/null

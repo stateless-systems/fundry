@@ -1,0 +1,100 @@
+%ul#breadcrumbs.clearfix
+  %li.first
+    %a{href: '/'} Home
+  %li.second
+    %a{href: '/profile'} User Profile
+  %li.third
+    Edit
+
+.leftCols
+  .outerPanel
+    .toolbar.clearfix{style: 'padding-left:5px;'}
+      .leftCol
+        .leftCol
+          %img{src: gravatar_url(user, 53), width: "53", height:"53"}
+        .rightCol
+          %h4 Gravatar:
+          %small
+            Change your avatar at
+            %a{href: 'http://gravatar.com'} gravatar.com
+            %br
+              Email used:
+              :javascript
+                eval(decodeURIComponent('#{mailto user}'));
+      .rightCol
+        %ul
+          %li
+            %a{href: '/profile'} Back to Profile
+
+    %br
+    .toolbar.clearfix
+      .leftCol
+        %h2 Edit Profile
+
+    .innerPanel.clearfix
+      %form#profile_edit{method: 'post', action: url(:profile)}
+        %fieldset
+          %legend Edit Profile
+          %input{type: 'hidden', name: '_method', value: 'put'}
+          %ul
+            %li
+              %label{for: 'user_name'} Name:
+              %input#user_name{type: 'text', name: 'user[name]', value: user.name}
+
+            %li
+              %label{for: 'user_email'} Email:
+              %input#user_email{type: 'text', name: 'user[email]', value: user.email}
+
+            %li#change-password
+              %h4 Change password (optional)
+              %ul
+                %li
+                  %label Old Password:
+                  %input{type: 'password', name: 'password[old]'}
+
+                %li
+                  %label New Password:
+                  %input{type: 'password', name: 'password[new]'}
+
+                %li
+                  %label Confirm new Password:
+                  %input{type: 'password', name: 'password[confirm]'}
+
+            %li.checkbox
+              %input#mu{type: 'checkbox', name: 'user[subscription][updates]', checked: user.subscription.updates?}
+              %label{for: 'mu'} Keep me informed of any new features or developments
+
+            %li.checkbox
+              %input#mr{type: 'checkbox', name: 'user[subscription][reminders]', checked: user.subscription.reminders?}
+              %label{for: 'mr'} Send me reminders related to projects and features.
+
+            %li
+              %label{for: 'user_twitter'} Twitter:
+              %input#user_twitter{type: 'text', name: 'user[twitter]', value: user.twitter}
+
+            %li
+              %label{for: 'user_web'} Website/Blog:
+              %input#user_web{type: 'text', name: 'user[web]', value: user.web}
+
+            %li
+              %label{for: 'user_currency'} Local Currency:
+              %select#user_currency{name: 'user[currency]'}
+                - BigMoney::Currency.all.each do |currency|
+                  %option{value: currency.code, selected: (user.currency.downcase == currency.code.downcase)}
+                    = "#{currency.code} - #{currency.name}"
+
+            %li
+              %label{for: 'user_bio'}
+                Bio (markdown accepted):
+                %a.markdownReference{href: '#'} ?
+              %textarea#user_bio.markdown-input.resizable{name: 'user[bio]'}= user.bio
+            %li.markdown-preview-container
+              %label Preview:
+              .markdown-preview.markdown.innerPanel
+
+        %button{type: 'submit'} Update
+
+    #markdownReference-modal
+
+.rightCols
+  != partial :'profile/_account'

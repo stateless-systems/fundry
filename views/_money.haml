@@ -1,0 +1,6 @@
+%abbr.money{title: "<img src='/art/flags/#{local.downcase}.png' width='' height='' />#{money.to_local_s(local || :usd)}"}
+  - if money.currency == BigMoney::Currency::USD
+    %span{class: 'symbol'} $
+  %span{class: 'whole'}>!= money.whole
+  %span{class: 'fraction'}>!= money.fraction
+  %span{class: 'currency'}>!= money.currency

@@ -1,0 +1,97 @@
+%ul#breadcrumbs.clearfix
+  %li.first
+    %a{href: '/'} Home
+  %li.second
+    About Fundry
+          
+.outerPanel
+  .toolbar.clearfix
+    .leftCol
+      %h2 About
+
+  .innerPanel.clearfix
+    .row.clearfix
+      .leftCol
+        %h3 Crowdfunding
+        %p
+          Fundry is a crowdfunding platform that helps developers get paid for developing new features, and enables a community of funders to contribute to get the features they want. Win win.
+      .rightCol
+        %img{src: "/art/images/crowdfunding.png", width: "300", height:"92"}
+
+    .row.clearfix
+      .leftCol
+        %img{src: "/art/images/features.png", width: "430", height:"444"}
+      .rightCol
+        %h3 Developers
+        %p You can use Fundry to profile your development projects. Once you’ve added a project you can list features that you plan to develop, as well as accept (or reject) feature requests from your community.
+
+        %p When you’ve completed and released a feature, everyone who has pledged to the funding of that feature has 7 days to accept or reject the feature.
+        
+        %p You receive all the pledged amounts (less any fee(s)) if the majority of funders accept the feature. If a minority accept the feature you receive funding from those that have accepted, but not those that rejected the feature.
+
+        %p Fundry charges a 5% fee on any successful funding (being 5% of the amount(s) received by you from funders). You will also be charged PayPal fees when you withdraw your fees to your PayPal account.
+
+        %p 
+          %a{href: "/faq"} Learn more in our FAQ
+
+    .row.clearfix        
+      .leftCol
+        %h3 Funders
+
+        %p To fund a feature you’ll need to deposit funds with Fundry using PayPal. Please note that you will be charged a fee by PayPal that will be deducted from your balance on Fundry. However, you are only charged fees when you deposit to or withdraw from Fundry. You are not charged fees when you pledge to features within Fundry.
+
+        %p Once you have funds in your Fundry account you can pledge to particular features, and add feature requests. You can cancel a pledge at any time before a project is completed. You may also withdraw at any time funds you have deposited with Fundry (provided that those funds have not been pledged to a project that is complete).
+
+        %p When a developer completes a feature you will be emailed to invite you to accept or reject a feature.
+
+        %p 
+          %a{href: "/faq"} Learn more in our FAQ
+        
+      .rightCol
+        %img{src: "/art/images/funding.png", width: "434", height:"261"}
+        
+    .row.clearfix
+      .leftCol
+        %img{src: "/art/images/voting.png", width: "300", height:"261"}
+      .rightCol
+        %h3 Voting on feature completion
+
+        %p When a Developer has completed a feature, all funders of that feature are notified and invited to vote to accept or reject the feature. To receive all the funding for that feature the Developer needs to receive a majority of acceptance votes.
+  
+        %p If a Funder accepts a feature then their pledged amount for that feature will be paid to the Developer, even if there is not a majority of acceptance votes among Funders for the feature.
+
+        %p If a Funder rejects a feature, and a majority of Funders also reject the feature, then their funding for that feature will not be paid to the Developer. 
+  
+        %p If a Funder rejects a feature, but a majority of Funders accept the feature, then all funding for that feature (including Funders who reject the feature) will be paid to the Developer. 
+  
+        %p If a vote is not received from a funder within 7 days of the date on which the email invitation to vote is sent by Fundry then Fundry will count that vote as an acceptance. 
+  
+        %p Due to the existence of spam filters, Fundry is not liable for any missed email notifications. To give Fundry emails the best chance of being received, you should add any @fundry.com email address as a safe sender.
+
+        %p
+          %a{href: "/faq"} Learn more in our FAQ
+        
+    .row.clearfix
+      .leftCol
+        %h3 Fees
+
+        %p PayPal fees are charged by PayPal when funds are deposited to and withdrawn from Fundry accounts. 
+
+        %p Fundry charges Developers a 5% fee on any successful funding. That is, for every dollar that a Developer receives for completed features, 5 cents will be paid as a fee to Fundry.
+
+        %p Unless otherwise stated, all balances and fees are in US Dollars.
+
+        %p
+          %a{href: "/faq"} Learn more in our FAQ
+        
+      .rightCol    
+        %img{src: "/art/images/paypal.png", width: "400", height:"220"}
+        
+  #leaderboard.clearfix
+    .leftCol
+      %p If you want to start earning cash for your skills - get started.
+
+    .rightCol  
+      %ul#funding
+        %li
+          %a.grnBtn{href: "/project/new"} Add a Project

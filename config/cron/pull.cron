@@ -1,0 +1,2 @@
+# add this cronjob on production server and make the repository has whatever production branch checked out.
+*/5 * * * * cd /var/www/fundry && ./bin/fundry-git pull

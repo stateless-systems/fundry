@@ -1,0 +1,10 @@
+%ul
+  %li{class: (params[:order].to_s !~ /new/i ? 'orderTopBtn selected' : 'orderTopBtn')}
+    %a{href: url(@tab || request.path_info.sub(%r{^/}, ''), {order: 'top'})} Top
+  %li{class: (params[:order].to_s =~ /new/i ? 'orderNewBtn selected' : 'orderTopBtn')}
+    %a{href: url(@tab || request.path_info.sub(%r{^/}, ''), {order: 'new'})} New
+%ul
+  %li.gridViewBtn
+    %a.gridViewBtn{href: 'javascript:;'} Grid view
+  %li.listViewBtn
+    %a.listViewBtn{href: 'javascript:;'} List view

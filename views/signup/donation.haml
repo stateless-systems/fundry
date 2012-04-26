@@ -1,0 +1,17 @@
+%ul#breadcrumbs.clearfix
+  %li.first
+    %a{href: '/'} Home
+  %li.second Donation
+
+#combined.outerPanel
+  .toolbar.clearfix
+    .leftCol
+      %h3.showProject= "New donation to '#{@project.name}'"
+
+  %form{method: 'post', autocomplete: 'off', action: 'donation'}
+    .innerPanel.clearfix
+      %fieldset{style: 'margin-bottom:20px;'}
+        != partial :"donation/_form"
+        %button#anonymous-donation{type: 'submit'} Donate without sign up
+
+    != partial :"signup/_authentication"

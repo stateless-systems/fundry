@@ -1,0 +1,42 @@
+.toolbar.clearfix
+  .leftCol
+    %h2 Feature Status
+
+.innerPanel.clearfix
+  - @feature.feature_states(order: [:created_at.desc]).each do |state|
+    %ul.listview.clearfix
+      %img.left{src: gravatar_url(@feature.project.user, 53), width:"53", height:"53", style: "margin-right:10px;"}
+      %li
+        %sup{class: state.status}
+          = state.status
+        \&nbsp;-
+        %small
+          != timeago state.created_at
+      %li
+        :safedown
+          #{state.detail}
+
+  - if authorized? @feature.project.user.id
+    %h4 Change Status
+
+    %form#project{method: 'post', action: url(:feature, @feature.id, :state)}
+      %fieldset
+        %legend Status
+        %ul
+          %li
+            %label{for: 'state_status'} State:
+            %select#state_status{name: 'state[status]'}
+              - Fundry::FeatureState::STATES.each do |state|
+                %option{selected: @feature.state == state}= state
+          %li
+            %label{for: 'state_detail'}
+              Comment (markdown accepted):
+              %a.markdownReference{href: '#'} ?
+            %textarea#state_detail.markdown-input.resizable{name: 'state[detail]'}
+          %li.markdown-preview-container
+            %label Preview:
+            .markdown-preview.markdown.innerPanel
+
+
+      %button{type: 'submit'} Update
+

@@ -1,0 +1,2 @@
+# add this cronjob on production database server. it keeps checking if slave is in sync.
+*/20 * * * * cd /var/www/fundry && ./bin/fundry-db check-slave

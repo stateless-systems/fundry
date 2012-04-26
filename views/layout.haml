@@ -1,0 +1,98 @@
+!!! Strict
+%html{:xmlns => "http://www.w3.org/1999/xhtml", "xml:lang" => "en", :lang => "en"}
+  %head
+    - title = @project ? "Crowdfunding for #{@project.name}" : @page_title
+    %title= "#{title} | Fundry"
+    %meta{'http-equiv' => 'Content-Type', content: 'text/html; charset=utf-8'}
+    %meta{name: 'google-site-verification', content: 'fvO_2kVnHc99dfR2eWC97XnpFL_m--KJZBMpUFsx4eU'}
+    %meta{name: 'description', content: "Fundry - #{title}. Support your favorite software project by pledging funds for upcoming and new features."}
+    != stylesheet_bundle_link_tag :all
+
+  %body{id: id, class: classes}
+    #document
+      #head.clearfix
+        .leftCol
+          %h1#fundryLogo
+            %a{href: url()} Fundry
+          - if authenticated? && !user.group?(:fundry)
+            #login
+              %dl
+                %dd
+                  %a{href: url(:profile)}
+                    %img{src: gravatar_url(user, 40), width: "40", height: "40", alt: user.username, title: user.username}
+                %dt
+                  Welcome
+                  %a{href: url(:profile)}= user.username
+                  - if user.admin?
+                    |
+                    %a{href: url(:admin)} admin
+                  |
+                  %a{href: url(:logout)} logout
+                  %br
+
+                  Balance:
+                  != money user.balance
+          - else
+            #login.noseperator
+              %dl
+                %dd
+                %dt
+                  %a{href: absolute_secure_url(:login, :nc)} Login
+                  |
+                  %a{href: absolute_secure_url(:signup)} Sign Up
+        .rightCol
+          %form.search{method: 'get', action: url(:search)}
+            %fieldset
+              %legend Site Search
+              %label{for: 'search_query'} Search:
+              %input#search_query{type: 'text', name: 'query', value: params[:query]}
+              %button{type: 'submit'} Search
+      #content.clearfix
+        - if flash[:error]
+          .error{class: flash[:error].to_s.match(/<li>/) ? 'list' : nil}
+            .flash-close X
+            != flash[:error]
+        - if flash[:success]
+          .success
+            .flash-close X
+            != flash[:success]
+        - if flash[:info]
+          .info
+            .flash-close X
+            != flash[:info]
+        != yield
+      #footer.clearfix
+        .leftCol
+          %h3 Fundry
+          %ul.whtArwNav
+            %li
+              %a{href: url(:about)} About
+            %li
+              %a{href: "http://blog.fundry.com/"} Fundry Blog
+            %li
+              %a{href: url(:faq)} FAQs
+            %li
+              %a{href: url('activity.rss')} RSS Feed
+            %li
+              %a{href: url(:project, '1-fundry', :feature, :new)} Fund the Fundry project
+            %li
+              %a{href: absolute_secure_url(:contact)} Contact
+        .midCol
+          %h3 About
+          %p
+            Fundry is a crowdfunding platform that helps developers get paid for developing new features,
+            and enables your community to pledge to get the features they want. Win win.
+          %p Sign up and add your projects or fund others.
+          %a{href: url(:about)} Learn more
+        .rightCol
+          #twitter
+      #copyright
+        %small
+          &copy; Copyright 2010 Stateless Systems. All Rights Reserved.
+          %a{href: url(:terms)} Terms &amp; Conditions
+          |
+          %a{href: url(:privacy)} Privacy
+
+
+  != javascript_bundle_include_tag :all
+  != analytics Fundry::Web::ANALYTICS_ACCOUNT

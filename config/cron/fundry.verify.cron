@@ -1,0 +1,5 @@
+# runs a weekly verification sweep for all unverified projects older than a week.
+10 3 * * 1 cd /var/www/fundry && ./bin/fundry project verify -r
+
+# runs a daily verification sweep for all unverified projects older than a day but newer than week.
+10 4 * * * cd /var/www/fundry && ./bin/fundry project verify

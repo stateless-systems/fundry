@@ -1,0 +1,50 @@
+%ul#breadcrumbs.clearfix
+  %li.first
+    %a{href: '/'} Home
+  %li.second
+    %a{href: url(:admin)} Admin
+  %li.third
+    Project
+
+.outerPanel.clearfix
+  .toolbar.clearfix
+    .leftCol
+      %h2
+        Project Verification
+        = '(%s)' % request.url.sub(/^.*verification./, '').capitalize
+
+    .rightCol
+      %ul
+        %li
+          %a{href: url(:admin, :verification, :confirm)} Awaiting confirmation
+        %li
+          %a{href: url(:admin, :verification, :recent)} Recently added
+        %li
+          %a{href: url(:admin, :verification, :all)} All unverified Projects
+
+  %br
+
+  %h3 Sites
+  #verification
+    #projects{class: @projects.empty? ? 'no-sites' : nil}
+      %ul.clearfix{style: "width: #{@projects.count*154}px"}
+        - @projects.each do |project|
+          %li
+            %a{href: url(:project, project.slug), target: '_blank'}= project.name
+            %a.web{href: sanitized_url(project.web)}
+              %img{src: url(:shots, project.id, :xsmall)}
+            .actions
+              %a.button.approve{href: url(:admin, :project, :approve, project.id)} Approve
+              %a.button.reject{href:  url(:admin, :project, :reject,  project.id)} Reject
+    #rejection
+      .header
+        %h3 Verification Message:
+      .panel.clearfix
+        %form{method: 'post'}
+          %textarea{name: 'message'}
+            Fundry verification link or widget was not found.
+          %button.ok Submit
+
+    %h3 Preview
+    %iframe
+

@@ -1,0 +1,35 @@
+%ul#breadcrumbs.clearfix
+  %li.first
+    %a{href: '/'} Home
+  %li.second
+    %a{href: '/profile'} User Profile
+  %li.third
+    Recover Profile
+
+.outerPanel
+  .toolbar.clearfix
+    .leftCol
+      %h2 Update profile
+    .rightCol
+
+  .innerPanel.clearfix
+  
+    %form#recover{method: 'post', action: url(:recover)}
+      %fieldset
+        %legend Update profile
+        %ul
+          %li
+            %input{type: 'hidden', name: '_method', value: 'put'}
+            %input{type: 'hidden', name: 'user[password_reset]', value: @user.password_reset}
+          %li
+            %label{for: 'user_username'} Username:
+            %input#user_username{type: 'text', readonly: true, name: 'user[username]', value: @user.username}
+          %li
+            %label{for: 'user_email'} Email:
+            %input#user_email{type: 'text', readonly: 'true', name: 'user[email]', value: @user.email}
+          %li
+            %label{for: 'user_password'} New Password:
+            %input#user_password{type: 'password', name: 'user[password]', value: ''}
+
+        %button{type: 'submit'} Save
+

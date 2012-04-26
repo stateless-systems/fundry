@@ -1,0 +1,44 @@
+
+- unless authenticated?
+  != partial :_start
+!= partial :_navigation
+
+.toolbar.clearfix
+  .leftCol
+    %h2 Features funded by users
+  .rightCol
+    != partial :_navigation_order
+
+.outerPanel.clearfix
+  - if @features.empty?
+    %p.empty No features.
+  - else
+    - features = paginate(@features)
+    %ul.gridView.clearfix
+      - features.each do |feature|
+        %li.clearfix
+          .leftCol
+            %h3
+              %a{href: url(:feature, feature.slug), title: feature.name}= feature.name
+              - if feature.state != 'pending'
+                %sup{class: feature.state}= feature.state
+            %p
+              %img.favicon{src: "/shots/#{feature.project.id}/favicon", height: "16", width: "16", alt: feature.project.name, title: feature.project.name}
+              %a{href: url(:project, feature.project.slug), title: feature.project.name}= feature.project.name
+            %small.clearfix
+              Created
+              != timeago feature.created_at
+              \- by
+              %a{href: url(:profile, feature.created_by.slug)}= feature.created_by.name
+          .rightCol
+            .pledged
+              != money feature.balance
+              Pledged
+            - if feature.state.match(/rejected|complete/)
+              %a.fundit.disabled.tipsie{title: "This feature cannot accept funding at this time."}
+                %span fund it
+            - else
+              %a.fundit{href: url(:feature, "#{feature.slug}#pledge")}
+                %span fund it
+    != paginate_control features
+

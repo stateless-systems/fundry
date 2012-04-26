@@ -1,0 +1,94 @@
+#
+# Monit control file
+#
+
+set daemon 120 # Poll at 2-minute intervals
+set logfile /var/log/monit.log
+set mailserver localhost
+set alert root@localhost
+set httpd port 2812 and
+  use the address 127.0.0.1
+  allow 127.0.0.1
+
+check system replica.fundry.com
+  if loadavg (1min) > 5 then alert
+  if loadavg (5min) > 3 then alert
+  if memory usage > 80% then alert
+  if cpu usage (user) > 90% then alert
+  if cpu usage (system) > 40% then alert
+  if cpu usage (wait) > 30% then alert
+
+check filesystem fs with path /dev/xvda
+  group server
+  if space usage > 80 % then alert
+  if space usage > 90 % then alert
+  if inode usage > 80 % then alert
+  if inode usage > 90 % then alert
+
+# postgres
+# NOTE monit only alerts on pg failures, we dont want it restarting db
+#      in case of load issues.
+check process postgres with pidfile /var/run/postgresql/9.0-main.pid
+  group database
+  if failed unixsocket /var/run/postgresql/.s.PGSQL.5432 protocol pgsql then alert
+  if failed host 127.0.0.1 port 5432 protocol pgsql then alert
+
+# varnish
+check process varnish with pidfile /var/run/varnishd.pid
+  group www
+  start program = "/etc/init.d/varnish start"
+  stop  program = "/etc/init.d/varnish stop"
+  if failed host fundry.com port 80 then restart
+  if 5 restarts within 5 cycles then timeout
+
+# nginx
+check process nginx with pidfile /var/run/nginx.pid
+  group www
+  start program = "/etc/init.d/nginx start"
+  stop  program = "/etc/init.d/nginx stop"
+  if failed host 127.0.0.1 port 8080 then restart
+  if 5 restarts within 5 cycles then timeout
+
+# memcached
+check process memcached with pidfile /var/run/memcached.pid
+  group server
+  start program = "/etc/init.d/memcached start"
+  stop  program = "/etc/init.d/memcached stop"
+  if failed host 127.0.0.1 port 11211 then restart
+  if 5 restarts within 5 cycles then timeout
+
+# beanstalk
+check process beanstalk with pidfile /var/run/beanstalkd.pid
+  group server
+  start program = "/etc/init.d/beanstalkd start"
+  stop  program = "/etc/init.d/beanstalkd stop"
+  if failed host 127.0.0.1 port 11300 then restart
+  if 5 restarts within 5 cycles then timeout
+
+# sphinx
+check process sphinx with pidfile /var/run/searchd.pid
+  group server
+  start program = "/etc/init.d/sphinxsearch start"
+  stop  program = "/etc/init.d/sphinxsearch stop"
+  if failed host 127.0.0.1 port 9312 then restart
+  if 5 restarts within 5 cycles then timeout
+
+#--
+# unicorn, thin & fundry jobs
+check process fundry-unicorn with pidfile /var/run/unicorn.pid
+  group server
+  start program = "/bin/su fundry -c '/var/www/fundry/bin/fundry-web -E failover start-unicorn'"
+  stop  program = "/bin/su fundry -c '/var/www/fundry/bin/fundry-web -E failover stop-unicorn'"
+  if 5 restarts within 5 cycles then timeout
+
+check process fundry-shots with pidfile /var/run/hotshots.pid
+  group server
+  start program = "/bin/su fundry -c '/var/www/fundry/bin/fundry-web -E failover start-shots'"
+  stop  program = "/bin/su fundry -c '/var/www/fundry/bin/fundry-web -E failover stop-shots'"
+  if 5 restarts within 5 cycles then timeout
+
+check process fundry-queue with pidfile /tmp/fundry.queue.pid
+  group server
+  start program = "/bin/su fundry -c '/var/www/fundry/bin/fundry-queue start -p 8080 -D'"
+  stop  program = "/bin/su fundry -c '/var/www/fundry/bin/fundry-queue stop'"
+  if 5 restarts within 5 cycles then timeout

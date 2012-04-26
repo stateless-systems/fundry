@@ -1,0 +1,49 @@
+#!/bin/bash
+
+usage() {
+  echo "$0 [-h] [permissions]"
+  exit -1
+}
+
+function init_script() {
+user=$(stat -c '%U' $(readlink -f $0))
+cat <<-EOF
+#!/bin/sh -e
+
+chgrp $user /var/{run,log}
+chown g+rwx /var/{run,log}
+exit 0
+EOF
+}
+
+function permissions() {
+  if [ "x$USER" != "xroot" ]; then
+    echo
+    echo FAILED
+    echo
+    echo '*** This needs to be run as root user ***'
+    echo
+    exit 1
+  fi
+
+  init_script
+  exit
+  init_script > /etc/rc.local
+  # remove current rc.local setup which might run after monit.
+  update-rc.d -f rc.local remove
+  # setup rc.local to run before monit which normally runs at 99.
+  update-rc.d rc.local defaults 90
+}
+
+while getopts "h" OPTION
+do
+  case $OPTION in
+    h) usage;;
+    *) usage;;
+  esac
+done
+
+case $1 in
+  permissions) permissions; exit 0;;
+            *) usage;;
+esac

@@ -1,0 +1,74 @@
+- if @feature.state == 'complete'
+  .toolbar.clearfix
+    .leftCol
+      %h2
+        Feature Approval
+        - if authenticated? && @pledge
+          %sup{class: @pledge.acceptance.state}= @pledge.acceptance.state
+    .rightCol
+      %ul
+        %li
+          %a.basic{href: "#"} How this works ?
+  .innerPanel.clearfix
+
+    #note
+      %p
+        When a Developer has completed a feature, all funders of that feature are notified and invited to vote to accept or reject the feature. To receive all the funding for that feature the Developer needs to receive a majority of acceptance votes.
+      %p
+        View the
+        %a.basic{href: "#"} Feature approval reference
+        for more information.
+
+    %h4 Funder votes:
+
+    #approval.clearfix
+      %sup.pendingFace
+        = @feature.acceptances(state: 'pending').length
+        Pending
+      %sup.approvalsFace
+        = @feature.acceptances(state: 'accepted').length
+        Approved
+      %sup.rejectionsFace
+        = @feature.acceptances(state: 'rejected').length
+        Rejections
+      - if authenticated? && @pledge
+        %form#project{method: 'post', action: url(:feature, @feature.id, :acceptance, @pledge.acceptance.id)}
+          %fieldset
+            %legend
+            %ul
+              %li
+                %input{type: 'hidden', name: '_method', value: 'PUT'}
+                %label{for: 'acceptance_state'} Approval:
+              %li
+                %select#acceptance_state{name: 'acceptance[state]'}
+                  - Fundry::FeatureAcceptance::STATES.each do |state|
+                    %option{selected: @pledge.acceptance.state == state}= state
+              %li
+                %label{for: 'acceptance_comment'}
+                  Comment:
+                  %a.markdownReference{href: '#'} ?
+                %textarea#acceptance_comment.markdown-input.resizable{name: 'acceptance[comment]'}
+              %li.markdown-preview-container
+                %label Preview:
+                .markdown-preview.markdown.innerPanel
+
+          %button{type: 'submit'} Update
+
+    #basic-modal-content
+      .toolbar.clearfix
+        .leftCol
+          %h2 Feature approval reference
+
+      .innerPanel.clearfix
+        %p If a Funder accepts a feature then their pledged amount for that feature will be paid to the Developer, even if there is not a majority of acceptance votes among Funders for the feature.
+
+        %p If a Funder rejects a feature, and a majority of Funders also reject the feature, then their funding for that feature will not be paid to the Developer.
+
+        %p If a Funder rejects a feature, but a majority of Funders accept the feature, then all funding for that feature (including Funders who reject the feature) will be paid to the Developer.
+
+        %p If a vote is not received from a funder within 7 days of the date on which the email invitation to vote is sent by Fundry then Fundry will count that vote as an acceptance.
+
+        %p Due to the existence of spam filters, Fundry is not liable for any missed email notifications. To give Fundry emails the best chance of being received, you should add any @fundry.com email address as a safe sender.
+
+        %p
+          %a Learn more in our FAQ

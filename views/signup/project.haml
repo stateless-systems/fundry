@@ -1,0 +1,19 @@
+%ul#breadcrumbs.clearfix
+  %li.first
+    %a{href: '/'} Home
+  %li.second Project
+
+#combined.outerPanel
+  .toolbar.clearfix
+    .leftCol
+      %h3.showProject New Project
+
+  %form{method: 'post', autocomplete: 'off', action: 'project'}
+    .innerPanel.clearfix
+      %fieldset
+        %ul.task
+          %legend New Project
+          != partial :'project/_fields'
+          #markdownReference-modal
+
+    != partial :"signup/_authentication"

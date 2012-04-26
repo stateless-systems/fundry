@@ -1,0 +1,77 @@
+root /var/www/fundry/public;
+error_page 500 501     /static/500.html;
+error_page 502 503 504 /static/502.html;
+proxy_intercept_errors on;
+
+location ~ /\. {
+  deny  all;
+}
+
+if (-f $document_root/maintenance.html) {
+  rewrite  ^(.*)$  /maintenance.html break;
+}
+
+location /shots {
+  proxy_set_header X-Real-IP  $remote_addr;
+  proxy_set_header Host $http_host;
+  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+  proxy_set_header X-Forwarded-Proto $scheme;
+  proxy_redirect   off;
+  proxy_max_temp_file_size 0;
+
+  # If the file exists as a static file serve it directly without
+  # running all the other rewite tests on it
+  if (-f $request_filename.jpg) {
+    expires 86400;
+    rewrite (.*) $1.jpg break;
+  }
+
+  if (-f $request_filename.ico) {
+    expires 86400;
+    rewrite (.*) $1.ico break;
+  }
+
+  if (!-f $request_filename) {
+    proxy_pass http://hotshots;
+    break;
+  }
+}
+
+location  /  {
+  # needed to forward user's IP address.
+  proxy_set_header X-Real-IP $remote_addr;
+  proxy_set_header Host $http_host;
+  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+  proxy_set_header X-Forwarded-Proto $scheme;
+  proxy_redirect   off;
+  proxy_max_temp_file_size 0;
+
+  # If the file exists as a static file serve it directly without
+  # running all the other rewite tests on it.
+  if (-f $request_filename) {
+    expires 14400;
+    break;
+  }
+
+  # check for index.html for directory index
+  # if its there on the filesystem then rewite
+  # the url to add /index.html to the end of it
+  # and then break to send it to the next config rules.
+  if (-f $request_filename/index.html) {
+    rewrite (.*) $1/index.html break;
+  }
+
+  if (-f $request_filename.html) {
+    rewrite (.*) $1.html break;
+  }
+
+  # strip our trailing slashes.
+  if ($request_filename ~ "^/.+/$") {
+    rewrite ^(.+)/$ $1 permanent;
+  }
+
+  if (!-f $request_filename) {
+    proxy_pass http://fundry;
+    break;
+  }
+}

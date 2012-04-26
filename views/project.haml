@@ -1,0 +1,36 @@
+- unless authenticated?
+  != partial :_start
+
+!= partial :_navigation
+.toolbar.clearfix
+  .leftCol
+    %h2 Projects added to fundry by developers
+  .rightCol
+    != partial :_navigation_order
+
+.outerPanel.clearfix
+  - if @projects.empty?
+    %p.empty No projects.
+  - else
+    - projects = paginate(@projects)
+    %ul.gridView.clearfix
+      - projects.each do |project|
+        %li.clearfix
+          - if project.created_at > DateTime.now - 14
+            %a.newSash{href: url(:project, project.slug), title: project.name}
+          %a{href: url(:project, project.slug), title: project.name}
+            %img{src: "/shots/#{project.id}/xsmall", width: "120", height:"90", alt: project.name, title: project.name}
+          .leftCol
+            %h3
+              %a{href: url(:project, project.slug)}= project.name
+            %small
+              Created
+              != timeago project.created_at
+            %p.heightFix= project.summary
+          .rightCol
+            .pledged
+              != money project.funding
+              funding
+            %a.fundit{href: url(:project, project.slug, :feature, :new)}
+              %span fund it
+    != paginate_control projects

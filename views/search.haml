@@ -1,0 +1,65 @@
+%ul#breadcrumbs.clearfix
+  %li.first
+    %a{href: '/'} Home
+  %li.second
+    Search Results
+
+.outerPanel.clearfix
+  .toolbar.clearfix
+    .leftCol
+      %h2= "Projects (#{@projects.size.to_i})"
+
+  - if @projects.empty?
+    %p.empty no matching results
+  - else
+    %ul.listView.clearfix
+      - @projects.each do |project|
+        %li.clearfix
+          %a{href: url(:project, project.slug), title: project.name}
+            %img{src: "/shots/#{project.id}/xsmall", alt: project.name}
+          .leftCol
+            %h3
+              %a{href: url(:project, project.slug), title: project.name}= project.name
+            %small
+              Created
+              != timeago project.created_at
+            %p= project.summary
+          .rightCol
+            .pledged
+              != money project.features.pending.inject(BigMoney.new(0, :usd)){|a, p| a + p.balance}
+              pledged
+
+.outerPanel.clearfix
+  .toolbar.clearfix
+    .leftCol
+      %h2= "Features (#{@features.size.to_i})"
+
+  - if @features.empty?
+    %p.empty no matching results
+  - else
+    %ul.listView.clearfix
+      - @features.each do |feature|
+        %li.clearfix
+          -#- if feature.project.created_at > DateTime.now - 30
+          .leftCol
+            %h3
+              %a{href: url(:feature, feature.slug), title: feature.name}= feature.name
+              %sup{class: feature.state}= feature.state
+            %p
+              %img.favicon{src: "/shots/#{feature.project.id}/favicon", height: "16", width: "16"}
+              %a{href: url(:project, feature.project.slug), title: feature.project.name}= feature.project.name
+            %small.clearfix
+              Created
+              != timeago feature.created_at
+              \- by
+              %a{href: url(:profile, feature.created_by.slug)}= feature.created_by.name
+          .rightCol
+            .pledged
+              != money feature.balance
+              Pledged
+            - if feature.state.match(/complete/)
+              %a.fundit.disabled.tipsie-s{title: "This feature has been completed."}
+                %span fund it
+            - else
+              %a.fundit{href: url(:feature, "#{feature.slug}#pledge")}
+                %span fund it

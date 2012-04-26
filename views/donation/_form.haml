@@ -1,0 +1,30 @@
+%input#project_id{type: 'hidden', name: 'donation[project_id]', value: @project.id}
+%ul
+  - if authenticated?
+    %li#pledgeAmount
+      %label{for: 'donation_amount'} Donation Amount USD:
+      %input#pledge_amount{type: 'text', name: 'donation[amount]', id: 'donation_amount', value: @balance, title: 'You are about to pledge money to a feature - you can retract it at any time before the Developer marks it as complete.'}
+  - else
+    %li#paypalFees.clearfix{style: 'margin-bottom:5px;'}
+      %label{for: 'donation_amount'} Donation Amount USD:
+      %input#pledge_amount.formsy{type: 'text', name: 'donation[amount]', id: 'donation_amount', value: @balance, title: 'You are about to pledge money to a feature - you can retract it at any time before the Developer marks it as complete.'}
+      %dl
+        %dt Estimated Paypal fees:
+        %dd
+          #fees_container.dollars
+        %dt Estimated total:
+        %dd
+          #total_container.dollars      
+
+  %li.checkbox
+    %input{type: 'checkbox', id: 'donation_anonymous', name: 'donation[anonymous]', value: @anonymous, checked: !!@anonymous}
+    %label{for: 'donation_anonymous'} Make my donation anonymous
+
+  %li
+    %label{for: 'donation_message'}
+      Message (markdown accepted):
+      %a.markdownReference{href: '#'} ?
+    %textarea#donation_message.markdown-input.resizable{name: 'donation[message]', rows: "0", cols: ""}= @message
+  %li.markdown-preview-container
+    %label Preview:
+    .markdown-preview.markdown.innerPanel

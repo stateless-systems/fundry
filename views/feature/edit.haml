@@ -1,0 +1,23 @@
+!= partial :'feature/_crumbs'
+
+.outerPanel.clearfix
+
+  != partial :'feature/_project'
+  != partial :'project/_verification'
+
+  .toolbar.clearfix
+    .leftCol
+      %h2
+        Editing
+        = %Q{"#{@feature.name}"}
+  .innerPanel.clearfix
+    %form#project{method: 'post', action: "/feature/#{@feature.id}"}
+      %fieldset
+        %legend
+        %ul
+          != partial :"feature/form/_fields"
+          %input{type: 'hidden', name: '_method', value: 'put'}
+
+      %button{type: 'submit'} Update
+
+#markdownReference-modal

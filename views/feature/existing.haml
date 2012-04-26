@@ -1,0 +1,62 @@
+%ul#breadcrumbs.clearfix
+  %li.first
+    %a{href: '/'} Home
+  %li.second
+    %a{href: url(:project, @feature.project.slug)}
+      Project:
+      = @feature.project.name
+  %li.third
+    Add a new feature
+
+#similar.outerPanel.clearfix
+  .toolbar.clearfix{style: 'padding:20px 1%; margin:0 1% 1% 0;'}
+    .leftCol
+      %h2{style: 'margin-bottom:.1em;'} Wait, we found similar features!
+      %p  Do you want to pledge to one of them instead?
+    .rightCol
+      %button.pledge-feature Continue, with my feature
+
+  %ul.listView.clearfix
+    - @features.each do |feature|
+      %li.clearfix
+        .leftCol
+          %h3
+            %a{href: url(:feature, feature.slug), title: feature.name}= feature.name
+            %sup{class: feature.state}= feature.state
+          %p
+            %img.favicon{src: "/shots/#{feature.project.id}/favicon", height: "16", width: "16"}
+            %a{href: url(:project, feature.project.slug), title: feature.project.name}= feature.project.name
+          %small.clearfix
+            Created
+            != timeago feature.created_at
+            \- by
+            %a{href: url(:profile, feature.created_by.slug)}= feature.created_by.name
+          .markdown
+            :safedown
+              #{feature.detail}
+        .rightCol
+          .pledged
+            != money feature.balance
+            Pledged
+          - if feature.state.match(/complete/)
+            %a.fundit.disabled.tipsie-s{title: "This feature has been completed."}
+              %span fund it
+          - else
+            %a.fundit{href: url(:feature, "#{feature.slug}#pledge")}
+              %span fund it
+
+  .toolbar.clearfix{style: 'padding:20px 1%; margin:0 1% 1% 0;'}
+    .leftCol
+      %h2{style: 'margin-bottom:.1em;'} Wait, we found similar features!
+      %p  Do you want to pledge to one of them instead?
+    .rightCol
+      %button.pledge-feature Continue, with my feature
+      %form{method: 'post', action: "/feature", style: "display:none;"}
+        %fieldset
+          %legend
+          %ul
+            != partial :"feature/_form"
+          %input{type: 'hidden', name: 'tc',    value: 'on'}
+          %input{type: 'hidden', name: 'force', value: 'on'}
+
+          %button{type: 'submit'} Submit

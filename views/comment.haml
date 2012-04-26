@@ -1,0 +1,32 @@
+
+- unless authenticated?
+  != partial :_start
+!= partial :_navigation
+
+.toolbar.clearfix
+  .leftCol
+    %h2 Comments
+  .rightCol
+    != partial :_navigation_order
+
+.outerPanel.clearfix
+  - if @comments.empty?
+    %p.empty No comments.
+  - else
+    - comments = paginate(@comments)
+    %ul.listView.clearfix
+      - comments.each do |comment|
+        %li.clearfix
+          %img.imgLeft{src: gravatar_url(comment.user, 53), width:"53", height:"53"}
+          .leftCol
+            %h3
+              %a{href: url(:project, comment.feature.project.slug)}= comment.feature.project.name
+            %small
+              Created
+              != timeago comment.created_at
+              %a{href: url(:profile, comment.user.slug)}= comment.user.name
+            .markdown
+              :safedown
+                #{comment.detail}
+    != paginate_control comments
+

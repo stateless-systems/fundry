@@ -1,0 +1,82 @@
+/** Stylesheet for the tooltips (jquery.tipsy) */
+
+.tipsy {
+	padding:5px;
+	font-size:12px;
+	font-weight:bold;
+	opacity: 0.85;
+	filter: alpha(opacity=85);
+	background: url('/art/sprites/tipsy.png') no-repeat;
+	line-height: 1.2em;
+}
+
+.tipsy-inner {
+	max-width:200px;
+	text-align:center;
+	padding:8px;
+	color:#fff;
+	-moz-border-radius:3px;
+	-webkit-border-radius:3px;
+	-moz-box-shadow: 0 0 3px rgba(0, 0, 0, 0.6);
+	-webkit-box-shadow: 0 0 3px rgba(0, 0, 0, 0.6);
+	background:#0d1401;
+}
+
+.formsy-inner {
+	max-width:400px;
+	padding:8px;
+	font-size:13px;
+	margin-left:0;
+	line-height:15px;
+	color: #3491bf;
+	border:1px solid #8bd0f3;
+	-moz-border-radius:3px;
+	-webkit-border-radius:3px;
+	background:#c8e9fa;
+}
+
+#testy {
+	padding:10px;
+	background: url('/art/sprites/formsy.png') 5px center no-repeat;
+}
+
+#paypalFees #testy {
+	padding:10px;
+	background: url('/art/sprites/formsy.png') 233px center no-repeat;
+}
+
+#paypalFees .formsy-inner {
+  margin-left:228px;
+}
+
+#project_name #testy {
+  margin-left:228px;
+}
+
+#project_name .formsy-inner {
+  margin-left:228px;
+}
+
+.tipsy img {
+	position:relative;
+	top:1px;
+	padding-right:6px;
+}
+
+.tipsy-north {
+	background-position:top center;
+}
+
+.tipsy-south {
+	margin-top:-6px;
+	background-position:bottom center;
+}
+
+.tipsy-east {
+	background-position:right center;
+	margin-left:-8px;
+}
+
+.tipsy-west {
+	background-position:left center;
+}

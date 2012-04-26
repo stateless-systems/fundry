@@ -1,0 +1,22 @@
+%input#project_id{type: 'hidden', name: 'feature[project_id]', value: @project.id}
+%ul
+  %li
+    %label{for: 'feature_name'} Feature Name:
+    %input#feature_name{type: 'text', name: 'feature[name]', value: @feature.name, size: 64}
+    %span.cremaining#feature_name_remaining 64
+  %li
+    %label{for: 'feature_detail'}
+      Detailed description (markdown accepted):
+      %a.markdownReference{href: '#'} ?
+    %textarea#feature_detail.markdown-input.resizable{name: 'feature[detail]', rows: '0', cols: '0'}= @feature.detail
+    %small
+      %strong Caution:
+      Please note, the feature name and description
+      %u cannot not be edited
+      once
+      %u another
+      pledge is made to the same feature.
+    %br
+  %li.markdown-preview-container
+    %label Preview:
+    .markdown-preview.markdown.innerPanel

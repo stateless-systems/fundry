@@ -1,0 +1,27 @@
+%ul#breadcrumbs.clearfix
+  %li.first
+    %a{href: '/'} Home
+  %li.second Pledge
+
+#combined.outerPanel
+
+  .toolbar.clearfix.projectfix
+    .leftCol
+      %h2.addFeature= @feature.id ? "Pledge to #{@feature.name}" : "New pledge in #{@project.name}"
+
+  %form{method: 'post', autocomplete: 'off', action: 'pledge'}
+    .innerPanel.clearfix
+      %fieldset
+        - if @feature.id
+          %ul
+            %li#pledgeAmount
+              %input{type: 'hidden', name: 'feature[id]', value: @feature.id}
+              %input{type: 'hidden', name: 'feature[project_id]', value: @feature.project_id}
+              %label{for: 'pledge_amount'} Pledge Amount (USD):
+              .outer
+                %input{type: 'text', name: 'pledge[amount]', value: @balance}
+        - else
+          != partial :"feature/_form"
+          #markdownReference-modal
+
+    != partial :"signup/_authentication"

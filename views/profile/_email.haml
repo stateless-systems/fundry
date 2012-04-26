@@ -1,0 +1,19 @@
+#email
+  .header
+    %small
+      %label Subject:
+      = @email.subject
+    %small
+      %label From:
+      = @email.from
+    %small
+      %label To:
+      = @email.to
+    %small
+      %label Received:
+      = @email.created_at.strftime("%a %d %b %Y [%T]")
+
+  .innerPanel.clearfix
+    .markdown
+      :markdown
+        #{@email.message}

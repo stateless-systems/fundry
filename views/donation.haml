@@ -1,0 +1,37 @@
+- unless authenticated?
+  != partial :_start
+!= partial :_navigation
+
+.toolbar.clearfix
+  .leftCol
+    %h2 Donations
+  .rightCol
+    != partial :_navigation_order
+
+.outerPanel.clearfix
+  - if @donations.empty?
+    %p.empty No donations.
+  - else
+    - donations = paginate(@donations)
+    %ul.gridView.clearfix
+      - donations.each do |donation|
+        %li.clearfix
+          %img{src: gravatar_url(donation.user, 53), width:"53", height:"53", alt: donation.user.name, title: donation.user.name}
+          .leftCol
+            %h3
+              %a{href: url(:profile, donation.user.slug), title: donation.user.name}=donation.user.name
+            %p
+              %img.favicon{src: "/shots/#{donation.project.id}/favicon", height: "16", width: "16", alt: donation.project.name, title: donation.project.name}
+              %a{href: url(:project, donation.project.slug)}= donation.project.name
+            %small
+              Donated
+              != timeago donation.created_at
+            .markdown
+              :safedown
+                "#{donation.message ? donation.message : 'No comments or messages.'}"
+          .rightCol
+            .pledged
+              != money -donation.transfer.balance
+              Donated
+    != paginate_control donations
+

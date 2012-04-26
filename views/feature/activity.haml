@@ -1,0 +1,56 @@
+%ul#breadcrumbs.clearfix
+  %li.first
+    %a{href: '/'} Home
+  %li.second
+    %a{href: url(:project, @feature.project.slug)}
+      Project:
+      = @feature.project.name
+  %li.third
+    %a{href: url(:feature, @feature.slug)}
+      Feature:
+      = @feature.name
+  %li.forth
+    Activity
+
+.leftCols
+  .outerPanel
+    .toolbar.clearfix
+      .leftCol
+        %h2 Activity
+      .rightCol
+
+    .innerPanel.clearfix
+      %table#activity.marginFix
+        %tr
+          %th When
+          %th Event
+        - events = paginate(@feature.events(order: [:id.desc]), limit: 50)
+        - events.each do |event|
+          - case event
+            - when Fundry::Event::Feature::Create
+              %tr
+                %td!= timeago event.created_at
+                %td
+                  %img.imgLeft{src: gravatar_url(event.user, 28), width:"28", height:"28"}
+                  %strong
+                    %a{href: url(:profile, event.detail[:user][:id])}= event.detail[:user][:name]
+                  %br
+                  requested feature
+                  %a{href: url(:feature, event.feature_slug)}= event.detail[:feature][:name]
+            - when Fundry::Event::Pledge::Create, Fundry::Event::Pledge::Retract, Fundry::Event::Pledge::Paid, Fundry::Event::Pledge::Refunded
+              %tr
+                %td!= timeago event.created_at
+                %td
+                  %img.imgLeft{src: gravatar_url(event.user, 28)}
+                  %strong
+                    %a{href: url(:profile, event.detail[:user][:id])}= event.detail[:user][:name]
+                  %br
+                  != event.title
+                  != money BigMoney.new(event.detail[:pledge][:balance][:amount], event.detail[:pledge][:balance][:currency])
+                  to:
+                  %a{href: url(:feature, event.feature_slug)}= event.detail[:feature][:name]
+        != paginate_control events
+
+.rightCols
+  != partial :'feature/panel/_statistics'
+

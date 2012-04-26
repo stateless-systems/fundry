@@ -1,0 +1,58 @@
+.authentication.innerPanel.clearfix
+  %input#paypal_fee{type: 'hidden', value: @paypal_fee}
+  %input#paypal_cut{type: 'hidden', value: @paypal_cut}
+  - signup = params['user'] && %w(username password email).find {|k| !params['user'][k].empty? }
+
+  .signup{style: signup ? 'width:100%;padding:0;border:none;' : ''}
+    %h3
+      %span Sign up
+    %fieldset
+      %legend Sign up
+      %ul
+        %li
+          %label{for: 'user_username'} Pick a username:
+          %input#user_username{type: 'text', name: 'user[username]', value: @user.username}
+
+        %li
+          %label{for: 'user_password'} Add a password:
+          %input#user_password{type: 'password', name: 'user[password]', value: @user.password}
+
+        %li
+          %label{for: 'user_email'} Provide an email address:
+          %input#user_email{type: 'text', name: 'user[email]', value: @user.email}
+
+        %li.captcha
+          %label{for: 'captcha'} Enter letters below:
+          != captcha(ajax: false)
+
+        %li.checkbox
+          %input{type: 'checkbox', name: 'tc', checked: !!params['tc']}
+          %label{for: 'tc'}
+            I agree to the
+            %a.terms{href: '#'} terms and conditions
+
+      %button{type: 'submit'} Sign up
+
+  .signin{style: signup ? 'display:none; border:none;' : ''}
+    %h3
+      %span Existing users
+    %fieldset
+      %legend Existing users
+      %ul
+        %li
+          %label{for: 'identifier'} Username or Email:
+          %input#identifier{type: 'text', name: 'identifier', value: params[:identifier]}
+
+        %li
+          %label{for: 'password'} Password:
+          %input#password{type: 'password', name: 'password', value: params[:password]}
+
+        %li.checkbox
+          %input{type: 'checkbox', name: 'tc', checked: !!params['tc']}
+          %label{for: 'tc'}
+            I agree to the
+            %a.terms{href: '#'} terms and conditions
+
+      %button{type: 'submit'} Login
+
+#terms-modal

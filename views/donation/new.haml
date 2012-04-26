@@ -1,0 +1,28 @@
+%ul#breadcrumbs.clearfix
+  %li.first
+    %a{href: '/'} Home
+  %li.second
+    %a{href: url(:project, @project.slug)}
+      Project
+      = @project.name
+  %li.third Donation
+
+.outerPanel
+  .toolbar.clearfix
+    .leftCol
+      %h2
+        Donate to
+        = @project.name
+
+  .innerPanel.clearfix
+    != partial :'project/_verification'
+
+    - if @project.verified?
+      %form#project{method: 'post', action: url(:donation)}
+        %fieldset
+          %legend
+            Donate to this project
+          != partial :"donation/_form"
+          %button{type: 'submit'} Donate
+
+      #markdownReference-modal

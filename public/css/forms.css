@@ -1,0 +1,631 @@
+
+form {
+  margin-bottom:15px;
+}
+
+fieldset {
+  display: block;
+  clear: both;
+  border:none;
+  padding:0;
+  margin:10px 0;
+}
+
+fieldset legend {
+  display: none;
+}
+
+fieldset ul {
+  margin: 0 !important;
+}
+
+fieldset ul li {
+  list-style:none !important;
+}
+
+fieldset ul li a {
+  font-size:1em;
+}
+
+fieldset label {
+  display: block;
+  clear: both;
+  color:#1B2508;
+  font-weight: bold;
+  line-height:1.3em;
+  margin:0 0 2px 3px;
+  padding:0;
+}
+
+#profile_edit #user_name,
+#profile_edit #user_email,
+#profile_edit #user_twitter,
+#profile_edit #user_web {
+  width: 250px;
+}
+
+#change-password {
+  padding: 10px;
+  border: 1px solid #ccc;
+  background: #eee;
+  margin: 10px 0 20px 0;
+  display: inline-block;
+}
+
+#change-password h4 {
+  font-size: 1.1em;
+  margin-bottom: 10px;
+}
+
+#change-password label {
+  font-size: 0.65em;
+}
+
+#change-password input {
+  width: 225px;
+}
+
+fieldset input {
+  color:#1B2508;
+  font-size:18px;
+  padding:8px 10px 10px 4px;
+  margin:0 3px 10px 0;
+  border:1px solid #ccc;
+  background:url('/art/bgs/inputField-bg.png') #fff repeat-x;
+}
+
+fieldset textarea {
+  width:99%;
+  height:210px;
+  padding:5px;
+  color:#1B2508;
+  line-height:1.5em;
+  border:1px solid #ccc;
+  background:url('/art/bgs/inputField-bg.png') #fff repeat-x;
+}
+
+fieldset select {
+  padding:4px 0 4px 4px;
+  margin:0 3px 10px 0;
+}
+
+fieldset div.grippie {
+  background:#EEEEEE url('/art/sprites/grippie.png') no-repeat scroll center 2px;
+  border-color:#DDDDDD;
+  border-style:solid;
+  border-width:0pt 1px 1px;
+  cursor:s-resize;
+  height:9px;
+  overflow:hidden;
+  margin-bottom:15px;
+}
+
+fieldset .resizable-textarea textarea {
+  display:block;
+}
+
+fieldset code.prettyprint,
+fieldset pre.prettyprint {
+  width:97%;
+  padding:10px;
+  display: inline-block;
+  border:1px solid #888;
+  -moz-border-radius:3px;
+  -webkit-border-radius:3px;
+}
+
+fieldset li.checkbox {
+  margin:0 !important;
+}
+
+fieldset li.checkbox label {
+  position:relative;
+  font-size:.9em;
+  left:16px;
+  top:-18px;
+}
+
+fieldset li.checkbox input {
+  border:none;
+  margin:0 !important;
+}
+
+fieldset small {
+  font-size:.9em !important;
+}
+
+fieldset .cremaining {
+  font-weight:bold;
+}
+
+fieldset .climit {
+  color:red;
+}
+
+fieldset #password {
+  width:165px;
+}
+
+fieldset .captcha {
+  width:220px;
+  padding:4px 40px 4px 4px;
+  margin-bottom:15px !important;
+  border:1px solid #fea755;
+  background:#ffbd7f;
+}
+
+fieldset #captcha {
+  width:244px;
+  background:url('/art/sprites/sitewide.png') 16px -518px no-repeat;
+}
+
+fieldset #crcaptcha {
+  width: 185px;
+  margin:4px 0 0 0;
+}
+
+fieldset #acceptance_state, fieldset #state_status, fieldset #user_username, fieldset #user_password {
+  width:185px;
+}
+
+fieldset #contact_email, fieldset #contact_name, fieldset #project_name, fieldset #project_web, fieldset #user_email {
+  width:250px;
+}
+
+fieldset #identifier, fieldset #password {
+  width:250px;
+}
+
+fieldset #contact_subject {
+  width:600px;
+}
+
+fieldset #contact_message {
+  width:604px;
+  height:200px;
+}
+
+fieldset a.markdownReference {
+  float:right;
+  position:relative;
+  top:-4px;
+  color:#F5F4EA;
+  padding:2px 5px 1px 5px;
+  text-decoration:none !important;
+  background:#616059;
+}
+
+fieldset a.markdownReference:hover {
+  background:#23300B;
+}
+
+fieldset #pledgeAmount input, fieldset #paypalFees input {
+  width:172px;
+  font-size:30px;
+  color:#2C2A45;
+  letter-spacing:-.03em;
+  padding:5px 0 2px 23px;
+  border:2px solid #9CBE3D;
+  background:url('/art/sprites/sitewide.png') #fff -200px -320px no-repeat;
+}
+
+fieldset #paypalFees input {
+ float:left;
+ margin-right:-10px;
+}
+
+fieldset #paypalFees {
+  width:30em;
+  padding:7px 7px 2px 8px;
+  margin-bottom:20px;
+  background:#23300b;
+}
+
+fieldset #paypalFees label {
+  color:#fff;
+}
+
+fieldset #paypalFees dl {
+  float:left;
+  font-size:1em;
+  color:#fff;
+  width:195px;
+}
+
+fieldset #paypalFees abbr {
+ color:#A6C640;
+}
+
+fieldset #paypalFees .symbol, #paypalFees .whole {
+ margin-right:-3px;
+}
+
+fieldset #paypalFees .dollars {
+  float:right;
+  color:#999;
+}
+
+/****************************************************************************  =buttons */
+
+#hero a.btn1 {
+  float:left;
+  display:block;
+  width:auto;
+  height:auto;
+  margin-right:10px;
+  text-align:center;
+  text-decoration:none;
+  -moz-border-radius:8px;
+  -webkit-border-radius:8px;
+  padding:1.2em 1.2em;
+  margin-top:20px;
+  background: url('/art/bgs/blkGradient-bg.jpg') repeat-x #151c06;
+}
+
+#hero a.btn2 {
+  float:left;
+  display:block;
+  width:auto;
+  height:auto;
+  text-align:center;
+  text-decoration:none;
+  -moz-border-radius:8px;
+  -webkit-border-radius:8px;
+  padding:1.2em 1.2em;
+  margin-top:20px;
+  background: url('/art/bgs/greenGradient-bg.jpg') repeat-x #7CAD28;
+}
+
+a.grnBtn {
+  cursor:pointer;
+  color:#fff;
+  font-size:2.2em;
+  font-weight:bold;
+  line-height:3em;
+  letter-spacing:-1px;
+  text-decoration:none;
+  border:none;
+  padding:21px 30px 21px 30px;
+  background: url('/art/bgs/greenGradient-bg.jpg') repeat-x #7CAD28;
+}
+
+a.grnBtn4 {
+  position:absolute;
+  right:1%;
+  margin-top:-3px;
+  cursor:pointer;
+  color:#fff;
+  font-size:1.7em;
+  font-weight:bold;
+  line-height:1.4em;
+  letter-spacing:-1px;
+  text-decoration:none;
+  border:none;
+  padding:11px 20px 11px 20px;
+  background: url('/art/bgs/greenGradient-bg.jpg') repeat-x #616059;
+}
+
+a.addBtn {
+  float:right;
+  font-size:1.9em;
+  letter-spacing:-1px;
+  font-weight:bold;
+  padding-left:22px;
+  line-height:1.3em;
+  background: url('/art/sprites/plusSign.png') left center no-repeat;
+}
+
+a.grnBtn:hover, a.grnBtn4:hover {
+  color:#fff;
+  text-decoration:none;
+}
+
+.button {
+  cursor:pointer;
+  color:#fff;
+  font-size:1.4em;
+  line-height:2.2em;
+  padding:8px 10px 6px 10px;
+  margin-left:-3px;
+  border:none;
+  text-decoration:none;
+  background: url('/art/bgs/greenGradient-bg.jpg') #A6C734;
+}
+
+.button:hover {
+  color:#fff;
+  text-decoration:none;
+}
+
+button, .pledge-feature {
+  cursor:pointer !important;
+  width:auto !important;
+  display:block !important;
+  color:#fff !important;
+  font-size:2.2em !important;
+  height:2.2em !important;
+  padding:0 .6em !important;
+  letter-spacing:-.02em !important;
+  border:none !important;
+  font-family:HelveticaNeue-Light, Helvetica, Arial !important;
+  background: url('/art/bgs/greenGradient-bg.jpg') repeat-x #7CAD28;
+}
+
+button.buttonFix {
+  position:relative;
+  top:10px;
+  height:47px;
+}
+
+.more {
+  display:block;
+  float:right;
+  color:#F5F4EA;
+  font-size:1em;
+  line-height:2.1em;
+  text-decoration:none;
+  text-transform:uppercase;
+  padding:2px 8px 1px 8px;
+  background:#616059;
+}
+
+.more:hover {
+  text-decoration:none;
+  color:#F5F4EA;
+  background:#23300B;
+}
+
+
+/****************************************************************************  =search */
+
+form.search fieldset {
+  float:right;
+  margin:12px 0 -40px 0;
+  padding:0;
+  width:100%;
+}
+
+form.search fieldset .leftColm {
+  float:left;
+  width:80%;
+}
+
+form.search fieldset .rightColm {
+  float:left;
+  width:20%;
+}
+
+form.search fieldset label {
+  display:none;
+}
+
+form.search fieldset input {
+  width:88%;
+  color:#000;
+  height:22px;
+  padding:4px 5px 6px 25px;
+  border:none;
+  float:left;
+  margin-right:0;
+  background:url('/art/sprites/sitewide.png') #fff -200px -260px no-repeat;
+  outline: none;
+}
+
+form.search fieldset button {
+  width:auto !important;
+  top:-42px !important;
+  float:right !important;
+  position:relative !important;
+  color:#F5F4EA !important;
+  font-size:15px !important;
+  height:32px !important;
+  padding:0 8px !important;
+  margin-left:0px !important;
+  letter-spacing:-.05em !important;
+  background:#616059 !important;
+  border:none !important;
+}
+
+form.search fieldset button:hover {
+  color:#F5F4EA;
+  background:#23300B;
+}
+
+
+/****************************************************************************  =combined_signup */
+
+#combined .authentication {
+  padding: 0;
+  vertical-align: top;
+}
+
+#combined .authentication li.empty {
+  height: 60px;
+}
+
+#combined .authentication .signin,
+#combined .authentication .signup {
+  float: left;
+  width: 50%;
+}
+
+#combined .authentication fieldset {
+  padding: 15px 15px 10px 15px;
+}
+
+#combined .authentication h3 {
+  padding: 5px 15px;
+  background: #c7c6be;
+}
+
+#combined .authentication .signin {
+  border: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  background: #fff;
+}
+
+#combined .authentication .signup h3 {
+  color: #fff;
+  background: #23300B;
+}
+
+#combined .authentication .signup {
+  margin: 0;
+  float: left;
+  width: 50%;
+  background: #eee;
+}
+
+#combined .paypal-hint {
+  top: -2px;
+  position: relative;
+  display: inline-block;
+}
+
+#combined .paypal-hint img {
+  z-index: 1;
+  display: inline;
+  top: 1px;
+  position: relative;
+}
+
+#combined .paypal-hint label {
+  left: -8px;
+  z-index: 0;
+  position: relative;
+  background: #ffc;
+  font-size: 11px;
+  padding: 5px 10px;
+  display: inline-block;
+  border: 1px solid #ccc;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+}
+
+#combined .authentication .signup.full {
+  width: 100%;
+  padding-left: 0;
+  border-left: 0;
+}
+
+#combined .authentication .hidden {
+  display: none;
+}
+
+#combined .authentication ul.task h4 {
+  margin: 10px 0;
+}
+
+#combined .authentication button,
+#anonymous-donation {
+  text-transform: none;
+}
+
+#combined small {
+  font-size: 12px !important;
+  color: #444;
+}
+
+.search  .tipsy-south,
+.feature .tipsy-south {
+  margin-top:  -2px;
+  margin-left: -65px;
+}
+
+
+/****************************************************************************  =notfication */
+
+.info, .success, .warning, .error, .validation {
+  margin: 0 0 10px 0; padding: 15px 10px 15px 42px;
+  font-size:1.4em; line-height:1.3em;
+}
+
+.info ul, .success ul, .warning, .error ul, .validation ul {
+  margin-left:15px;
+}
+
+.info li, .success li, .warning, .error li, .validation li {
+  list-style:disc;
+  margin-bottom:.1em;
+}
+
+#content .info a, #content .success a, #content .warning a, #content .error a, #content .validation a {
+  font-size: 1em;
+}
+
+.info {
+  color: #3491bf;
+  border: 1px solid #8bd0f3;
+  background:url('/art/sprites/sitewide.png') #c8e9fa -1150px -667px no-repeat;
+}
+
+.success, .validation, .verified {
+  color: #79A730;
+  border: 1px solid #92C93A;
+  background:url('/art/sprites/sitewide.png') #D1E3B3 -1150px -729px no-repeat;
+}
+
+.warning, .error {
+  color: #CC4449;
+  border: 1px solid #ea969a;
+  background:url('/art/sprites/sitewide.png') #FADAE3 -1150px -787px no-repeat;
+}
+
+.error.list {
+  background-image: none;
+  padding-left: 20px;
+}
+
+.note {
+  margin: 10px 0px;
+  padding: 15px 10px;
+  color:#766633;
+  border:1px solid #DFC061;
+  background:#FFFFE1;
+}
+
+.note p {
+  color:#766633;
+}
+
+#note {
+  position:relative;
+  width:50%;
+  float:right;
+  font-size:.9em;
+  padding:10px;
+  border: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  background:#f4f4f4;
+  margin-bottom:15px;
+}
+
+.flash-close, #close {
+  cursor:pointer;
+  float:right;
+  font-size:1.1em;
+  font-weight:bold;
+}
+
+#closeNote {
+  cursor:pointer;
+  float:right;
+  font-size:1.3em;
+}
+
+#pretend input {
+  float: left;
+  margin-right: 10px;
+}
+
+#pretend button {
+  display: inline-block !important;
+  font-size: 18px !important;
+  letter-spacing: 1px !important;
+  height: 42px !important;
+}
+
+form .info {
+  font-size: 1em !important;
+}
